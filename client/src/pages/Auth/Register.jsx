@@ -1,9 +1,8 @@
-import React from "react";
-import LayoutTheme from "../../components/Layout/LayoutTheme";
+import React, { useState } from "react";
 import axios from "axios";
-import toast from "react-hot-toast";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import LayoutTheme from "../../components/Layout/LayoutTheme";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -11,8 +10,10 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const [answer, setAnswer] = useState("");
   const navigate = useNavigate();
 
+  // form function
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -24,6 +25,7 @@ const Register = () => {
           password,
           phone,
           address,
+          answer,
         }
       );
       if (res && res.data.success) {
@@ -37,11 +39,10 @@ const Register = () => {
       toast.error("Something went wrong");
     }
   };
-  console.log(import.meta.env.VITE_API);
 
   return (
     <LayoutTheme title={"Register"}>
-      <div className='form-container'>
+      <div className='form-container '>
         <form onSubmit={handleSubmit}>
           <h4 className='title'>REGISTER FORM</h4>
           <div className='mb-3'>
@@ -97,6 +98,17 @@ const Register = () => {
               className='form-control'
               id='exampleInputEmail1'
               placeholder='Enter Your Address'
+              required
+            />
+          </div>
+          <div className='mb-3'>
+            <input
+              type='text'
+              value={answer}
+              onChange={(e) => setAnswer(e.target.value)}
+              className='form-control'
+              id='exampleInputEmail1'
+              placeholder='What is Your Favorite sports'
               required
             />
           </div>
