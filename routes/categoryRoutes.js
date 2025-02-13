@@ -1,29 +1,38 @@
 import express from "express";
-import { isAdmin, requireSignIn } from "../middlewares/authMiddleware.js";
-
+import { isAdmin, requireSignIn } from "./../middlewares/authMiddleware.js";
 import {
-  registerController,
-  loginController,
-  testController,
-  forgotPasswordController,
-} from "../controllers/authController.js";
+  categoryControlller,
+  createCategoryController,
+  deleteCategoryCOntroller,
+  singleCategoryController,
+  updateCategoryController,
+} from "./../controllers/categoryController.js";
 
 const router = express.Router();
 
-router.post("/register", registerController);
+router.post(
+  "/create-category",
+  requireSignIn,
+  isAdmin,
+  createCategoryController
+);
 
-router.post("/login", loginController);
+router.put(
+  "/update-category/:id",
+  requireSignIn,
+  isAdmin,
+  updateCategoryController
+);
 
-router.post("/forgot-password", forgotPasswordController);
+router.get("/get-category", categoryControlller);
 
-router.get("/test", requireSignIn, isAdmin, testController);
+router.get("/single-category/:slug", singleCategoryController);
 
-router.get("/user-auth", requireSignIn, (req, res) => {
-  res.status(200).send({ ok: true });
-});
-
-router.get("/admin-auth", requireSignIn, isAdmin, (req, res) => {
-  res.status(200).send({ ok: true });
-});
+router.delete(
+  "/delete-category/:id",
+  requireSignIn,
+  isAdmin,
+  deleteCategoryCOntroller
+);
 
 export default router;
