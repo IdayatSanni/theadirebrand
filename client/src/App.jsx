@@ -21,12 +21,14 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Products from "./pages/Admin/Products";
 import UpdateProduct from "./pages/Admin/UpdateProduct";
 import Search from "./pages/Search";
+import ProductDetails from "./pages/ProductDetails";
 
 function App() {
   return (
     <Routes>
       <Route path='/' element={<HomePage />} />
       <Route path='/search' element={<Search />} />
+      <Route path='/product/:slug' element={<ProductDetails />} />
       <Route path='/dashboard' element={<PrivateRoute />}>
         <Route path='user' element={<Dashboard />} />
         <Route path='user/orders' element={<Orders />} />
