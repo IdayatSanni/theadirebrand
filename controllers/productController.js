@@ -7,7 +7,7 @@ export const createProductController = async (req, res) => {
     const { name, description, price, category, quantity, shipping } =
       req.fields;
     const { photo } = req.files;
-    //alidation
+
     switch (true) {
       case !name:
         return res.status(500).send({ error: "Name is Required" });
@@ -46,7 +46,6 @@ export const createProductController = async (req, res) => {
   }
 };
 
-//get all products
 export const getProductController = async (req, res) => {
   try {
     const products = await productModel
@@ -70,7 +69,7 @@ export const getProductController = async (req, res) => {
     });
   }
 };
-// get single product
+
 export const getSingleProductController = async (req, res) => {
   try {
     const product = await productModel
@@ -92,7 +91,6 @@ export const getSingleProductController = async (req, res) => {
   }
 };
 
-// get photo
 export const productPhotoController = async (req, res) => {
   try {
     const product = await productModel.findById(req.params.pid).select("photo");
@@ -109,7 +107,6 @@ export const productPhotoController = async (req, res) => {
     });
   }
 };
-
 
 export const deleteProductController = async (req, res) => {
   try {
@@ -128,13 +125,12 @@ export const deleteProductController = async (req, res) => {
   }
 };
 
-
 export const updateProductController = async (req, res) => {
   try {
     const { name, description, price, category, quantity, shipping } =
       req.fields;
     const { photo } = req.files;
-    //alidation
+
     switch (true) {
       case !name:
         return res.status(500).send({ error: "Name is Required" });
@@ -173,6 +169,68 @@ export const updateProductController = async (req, res) => {
       success: false,
       error,
       message: "Error in Updte product",
+    });
+  }
+};
+
+export const productFiltersController = async (req, res) => {
+  try {
+    const { checked, radio } = req.body;
+    let args = {};
+    if (checked.length > 0) args.category = checked;
+    if (radio.length) args.price = { $gte: radio[0], $lte: radio[1] };
+    const products = await productModel.find(args);
+    res.status(200).send({
+      success: true,
+      products,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      success: false,
+      message: "Error WHile Filtering Products",
+      error,
+    });
+  }
+};
+
+export const productCountController = async (req, res) => {
+  try {
+    const total = await productModel.find({}).estimatedDocumentCount();
+    res.status(200).send({
+      success: true,
+      total,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      message: "Error in product count",
+      error,
+      success: false,
+    });
+  }
+};
+
+export const productListController = async (req, res) => {
+  try {
+    const perPage = 2;
+    const page = req.params.page ? req.params.page : 1;
+    const products = await productModel
+      .find({})
+      .select("-photo")
+      .skip((page - 1) * perPage)
+      .limit(perPage)
+      .sort({ createdAt: -1 });
+    res.status(200).send({
+      success: true,
+      products,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      success: false,
+      message: "error in per page ctrl",
+      error,
     });
   }
 };
