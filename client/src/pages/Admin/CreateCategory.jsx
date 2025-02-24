@@ -147,7 +147,7 @@ const CreateCategory = () => {
             <Modal
               onCancel={() => setVisible(false)}
               footer={null}
-              visible={visible}>
+              open={visible}>
               <CategoryForm
                 value={updatedName}
                 setValue={setUpdatedName}

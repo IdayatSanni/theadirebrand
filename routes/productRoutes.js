@@ -29,16 +29,12 @@ router.put(
   updateProductController
 );
 
-//get products
 router.get("/get-product", getProductController);
 
-//single product
 router.get("/get-product/:slug", getSingleProductController);
 
-//get photo
 router.get("/product-photo/:pid", productPhotoController);
 
-//delete rproduct
-router.delete("/product/:pid", deleteProductController);
+router.delete("/delete-product/:pid", deleteProductController);
 
 export default router;
