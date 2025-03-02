@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 const CartPage = () => {
   const [auth, setAuth] = useAuth();
   const [cart, setCart] = useCart();
+  const [paymentOption, setPaymentOption] = useState("delivery");
   const navigate = useNavigate();
 
   const totalPrice = () => {
@@ -16,7 +17,7 @@ const CartPage = () => {
       });
       return total.toLocaleString("en-US", {
         style: "currency",
-        currency: "USD",
+        currency: "NGN",
       });
     } catch (error) {
       console.log(error);
@@ -33,6 +34,11 @@ const CartPage = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleCheckout = () => {
+    console.log(`Checkout with ${paymentOption} payment option`);
+    navigate("/orders");
   };
   return (
     <LayoutTheme title={"cart page"}>
@@ -112,10 +118,32 @@ const CartPage = () => {
                         state: "/cart",
                       })
                     }>
-                    Plase Login to checkout
+                    Please Login to checkout
                   </button>
                 )}
               </div>
+            )}
+          </div>
+          <div className='mt-3'>
+            <h4>Payment Option</h4>
+            <select
+              className='form-select'
+              value={paymentOption}
+              onChange={(e) => setPaymentOption(e.target.value)}>
+              <option value='delivery'>Payment on Delivery</option>
+              <option value='online'>Online Payment</option>
+            </select>
+          </div>
+
+          <div className='mt-4'>
+            {auth?.token && cart?.length > 0 ? (
+              <button className='btn btn-success' onClick={handleCheckout}>
+                Complete Checkout
+              </button>
+            ) : (
+              <button className='btn btn-danger' disabled>
+                Complete Checkout (Login Required)
+              </button>
             )}
           </div>
         </div>

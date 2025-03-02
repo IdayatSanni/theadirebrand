@@ -7,6 +7,7 @@ import {
   productPhotoController,
   updateProductController,
   productCountController,
+  productFiltersController,
   productListController,
   realtedProductController,
   productCategoryController,
