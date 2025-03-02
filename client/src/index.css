@@ -14,18 +14,36 @@ body {
   font-family: "Poppins", sans-serif;
   font-size: 17px;
   line-height: 26px;
-  background-color: rgb(36, 36, 36);
-  color: #ffffff;
+  background-color: rgb(36, 36, 36) !important;
+  color: #ffffff !important;
   text-transform: uppercase;
 }
 
-.navbar {
+.navbar-btm {
   font-family: "Poppins", sans-serif;
   font-size: 17px;
   line-height: 26px;
   border-bottom: 1px solid rgb(7, 7, 7);
   color: #ffffff;
   text-transform: uppercase;
+}
+
+.free-shipping-text {
+  font-size: 14px;
+  color: #fff;
+}
+
+.nav-link-custom {
+  font-weight: bold;
+  color: #ff6f61 !important;
+}
+
+#offcanvasNavbarDropdown-auth {
+  color: #ffffff !important;
+}
+
+#offcanvasNavbarDropdown-auth:hover:active {
+  color: #fae1e1 !important;
 }
 
 .forgot-btn {
@@ -39,16 +57,10 @@ body {
 
 .nav-link {
   font-weight: 300 !important;
-  color: #030303;
 }
 
 .nav-link:hover {
   color: #792f04;
-}
-
-.active {
-  color: rgb(43, 42, 42) !important;
-  border-bottom: 2px solid rgb(70, 68, 68);
 }
 
 .navbar-brand {
@@ -58,19 +70,39 @@ body {
   color: #050505;
 }
 
-.navbar-brand:hover {
+ul {
+  list-style-type: none;
+  margin-bottom: 0 !important;
+}
+
+.dropdown-menu.show {
+  list-style-type: none;
+  margin: 0px;
+  left: -10% !important;
+}
+
+.search-button {
+  background-color: #792f04;
   color: #f6efeb;
+}
+
+.price {
+  font-weight: 700;
+  font-family: "roboto", sans-serif;
+  text-decoration: none;
+  letter-spacing: 3px;
+  color: #ffffff;
+}
+
+.navbar-brand:hover {
+  color: #792f04;
 }
 
 .footer {
   color: white;
   padding: 25px;
-  background: #000000; /* fallback for old browsers */
-  background: -webkit-linear-gradient(
-    to right,
-    #434343,
-    #000000
-  ); /* Chrome 10-25, Safari 5.1-6 */
+  background: #000000;
+  background: -webkit-linear-gradient(to right, #434343, #000000);
   background: linear-gradient(to right, #434343, #000000);
 }
 
@@ -371,4 +403,23 @@ filters
 
 .similar-products .card-img-top {
   height: 300px !important;
+}
+
+@media (max-width: 768px) {
+  .free-shipping-text {
+    font-size: 12px;
+    text-align: left;
+  }
+
+  .navbar-bg {
+    font-size: 14px;
+    line-height: 26px;
+  }
+
+  .dropdown-menu.show {
+    list-style-type: none;
+    margin: 0px;
+    width: 50%;
+    left: -20% !important;
+  }
 }

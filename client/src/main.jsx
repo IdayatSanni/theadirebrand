@@ -5,6 +5,7 @@ import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/auth.jsx";
 import "antd/dist/reset.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { SearchProvider } from "./context/search.jsx";
 import { CartProvider } from "./context/cart.jsx";
 
