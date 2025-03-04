@@ -21,22 +21,18 @@ const CategoryProduct = () => {
       const url = `${
         import.meta.env.VITE_API
       }/api/v1/product/product-category/${params.slug}`;
-      console.log("Request URL:", url); // Log the request URL
+
       const { data } = await axios.get(url);
       setProducts(data?.products);
       setCategory(data?.category);
     } catch (error) {
-      console.log("Error response:", error.response); // Log full error response
       if (error.response) {
-        // The request was made, but the server responded with a status code outside of the range 2xx
-        console.log("Response Status:", error.response.status); // Status code
-        console.log("Response Data:", error.response.data); // Error message from server
-        console.log("Response Headers:", error.response.headers); // Headers from the server
+        console.log("Response Status:", error.response.status);
+        console.log("Response Data:", error.response.data);
+        console.log("Response Headers:", error.response.headers);
       } else if (error.request) {
-        // The request was made, but no response was received
         console.log("Request error:", error.request);
       } else {
-        // Something else happened in setting up the request
         console.log("Error message:", error.message);
       }
     }
@@ -71,7 +67,7 @@ const CategoryProduct = () => {
                       <p className='card-text'>
                         {p.description.substring(0, 30)}...
                       </p>
-                      <p className='card-text'> ${p.price}</p>
+                      <p className='card-text'> ₦{p.price}</p>
                       <button
                         className='btn btn-primary ms-1'
                         onClick={() => navigate(`/product/${p.slug}`)}>

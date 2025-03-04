@@ -9,6 +9,7 @@ import {
   productCountController,
   productFiltersController,
   productListController,
+  getBestsellersController,
   realtedProductController,
   productCategoryController,
 } from "../controllers/productController.js";
@@ -18,7 +19,7 @@ import { searchProductController } from "../controllers/productController.js";
 
 const router = express.Router();
 
-//routes
+
 router.post(
   "/create-product",
   requireSignIn,
@@ -26,7 +27,7 @@ router.post(
   formidable(),
   createProductController
 );
-//routes
+
 router.put(
   "/update-product/:pid",
   requireSignIn,
@@ -52,6 +53,8 @@ router.get("/product-list/:page", productListController);
 router.get("/search/:keyword", searchProductController);
 
 router.get("/related-product/:pid/:cid", realtedProductController);
+
+router.get("/bestsellers", getBestsellersController);
 
 router.get("/product-category/:slug", productCategoryController);
 

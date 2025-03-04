@@ -5,8 +5,16 @@ import slugify from "slugify";
 
 export const createProductController = async (req, res) => {
   try {
-    const { name, description, price, category, quantity, shipping } =
-      req.fields;
+    const {
+      name,
+      description,
+      price,
+      category,
+      quantity,
+      shipping,
+      bestseller,
+    } = req.fields; // Added bestseller
+
     const { photo } = req.files;
 
     switch (true) {
@@ -16,21 +24,29 @@ export const createProductController = async (req, res) => {
         return res.status(500).send({ error: "Description is Required" });
       case !price:
         return res.status(500).send({ error: "Price is Required" });
-      case !category:
-        return res.status(500).send({ error: "Category is Required" });
+      case !category || category.length === 0:
+        return res
+          .status(500)
+          .send({ error: "At least one Category is Required" });
       case !quantity:
         return res.status(500).send({ error: "Quantity is Required" });
       case photo && photo.size > 1000000:
         return res
           .status(500)
-          .send({ error: "photo is Required and should be less then 1mb" });
+          .send({ error: "photo is Required and should be less than 1mb" });
     }
 
-    const products = new productModel({ ...req.fields, slug: slugify(name) });
+    const products = new productModel({
+      ...req.fields,
+      slug: slugify(name),
+      bestseller: bestseller || false,
+    });
+
     if (photo) {
       products.photo.data = fs.readFileSync(photo.path);
       products.photo.contentType = photo.type;
     }
+
     await products.save();
     res.status(201).send({
       success: true,
@@ -42,7 +58,7 @@ export const createProductController = async (req, res) => {
     res.status(500).send({
       success: false,
       error,
-      message: "Error in crearing product",
+      message: "Error in creating product",
     });
   }
 };
@@ -299,5 +315,22 @@ export const productCategoryController = async (req, res) => {
       error,
       message: "Error While Getting products",
     });
+  }
+};
+
+export const getBestsellersController = async (req, res) => {
+  try {
+    const bestsellers = await productModel.find({ bestseller: true }).limit(10);
+
+    if (!bestsellers || bestsellers.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "No bestsellers found" });
+    }
+
+    return res.json({ success: true, products: bestsellers });
+  } catch (error) {
+    console.error("Error fetching bestsellers:", error);
+    return res.status(500).json({ success: false, message: "Server Error" });
   }
 };

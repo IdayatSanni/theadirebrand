@@ -104,7 +104,7 @@ const Header = () => {
                   Bibani
                 </Nav.Link>
 
-                <Nav.Link as={Link} to='/'>
+                <Nav.Link as={Link} to='/shopall'>
                   Shop All
                 </Nav.Link>
               </Nav>
