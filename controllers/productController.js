@@ -1,20 +1,23 @@
 import productModel from "../models/productModel.js";
 import categoryModel from "../models/categoryModel.js";
+import yardModel from "../models/yardModel.js";
+import lengthModel from "../models/lengthModel.js";
 import fs from "fs";
 import slugify from "slugify";
 
 export const createProductController = async (req, res) => {
   try {
-    const {
-      name,
-      description,
-      price,
-      category,
-      quantity,
-      shipping,
-      bestseller,
-    } = req.fields; // Added bestseller
-
+    const { 
+      name, 
+      description, 
+      price, 
+      category, 
+      quantity, 
+      shipping, 
+      bestseller, 
+      yard, 
+      length 
+    } = req.fields;
     const { photo } = req.files;
 
     switch (true) {
@@ -25,33 +28,47 @@ export const createProductController = async (req, res) => {
       case !price:
         return res.status(500).send({ error: "Price is Required" });
       case !category || category.length === 0:
-        return res
-          .status(500)
-          .send({ error: "At least one Category is Required" });
+        return res.status(500).send({ error: "At least one Category is Required" });
       case !quantity:
         return res.status(500).send({ error: "Quantity is Required" });
       case photo && photo.size > 1000000:
-        return res
-          .status(500)
-          .send({ error: "photo is Required and should be less than 1mb" });
+        return res.status(500).send({ error: "Photo is required and should be less than 1MB" });
     }
 
-    const products = new productModel({
+    let yardData = null;
+    if (yard) {
+      yardData = await yardModel.findById(yard);
+      if (!yardData) {
+        return res.status(400).send({ error: "Invalid Yard ID" });
+      }
+    }
+
+    let lengthData = null;
+    if (length) {
+      lengthData = await lengthModel.findById(length);
+      if (!lengthData) {
+        return res.status(400).send({ error: "Invalid Length ID" });
+      }
+    }
+
+    const product = new productModel({
       ...req.fields,
       slug: slugify(name),
       bestseller: bestseller || false,
+      yard: yardData ? yardData._id : null,
+      length: lengthData ? lengthData._id : null,
     });
 
     if (photo) {
-      products.photo.data = fs.readFileSync(photo.path);
-      products.photo.contentType = photo.type;
+      product.photo.data = fs.readFileSync(photo.path);
+      product.photo.contentType = photo.type;
     }
 
-    await products.save();
+    await product.save();
     res.status(201).send({
       success: true,
       message: "Product Created Successfully",
-      products,
+      product,
     });
   } catch (error) {
     console.log(error);
@@ -67,21 +84,21 @@ export const getProductController = async (req, res) => {
   try {
     const products = await productModel
       .find({})
-      .populate("category")
+      .populate("category yard length")
       .select("-photo")
       .limit(12)
       .sort({ createdAt: -1 });
     res.status(200).send({
       success: true,
-      counTotal: products.length,
-      message: "ALlProducts ",
+      countTotal: products.length,
+      message: "All Products",
       products,
     });
   } catch (error) {
     console.log(error);
     res.status(500).send({
       success: false,
-      message: "Erorr in getting products",
+      message: "Error in getting products",
       error: error.message,
     });
   }
@@ -92,7 +109,7 @@ export const getSingleProductController = async (req, res) => {
     const product = await productModel
       .findOne({ slug: req.params.slug })
       .select("-photo")
-      .populate("category");
+      .populate("category yard length");
     res.status(200).send({
       success: true,
       message: "Single Product Fetched",
@@ -102,7 +119,7 @@ export const getSingleProductController = async (req, res) => {
     console.log(error);
     res.status(500).send({
       success: false,
-      message: "Eror while getitng single product",
+      message: "Error while getting single product",
       error,
     });
   }
@@ -119,7 +136,7 @@ export const productPhotoController = async (req, res) => {
     console.log(error);
     res.status(500).send({
       success: false,
-      message: "Erorr while getting photo",
+      message: "Error while getting photo",
       error,
     });
   }
@@ -144,8 +161,7 @@ export const deleteProductController = async (req, res) => {
 
 export const updateProductController = async (req, res) => {
   try {
-    const { name, description, price, category, quantity, shipping } =
-      req.fields;
+    const { name, description, price, category, quantity, shipping, yard, length } = req.fields;
     const { photo } = req.files;
 
     switch (true) {
@@ -160,32 +176,52 @@ export const updateProductController = async (req, res) => {
       case !quantity:
         return res.status(500).send({ error: "Quantity is Required" });
       case photo && photo.size > 1000000:
-        return res
-          .status(500)
-          .send({ error: "photo is Required and should be less then 1mb" });
+        return res.status(500).send({ error: "Photo is required and should be less than 1MB" });
     }
 
-    const products = await productModel.findByIdAndUpdate(
-      req.params.pid,
-      { ...req.fields, slug: slugify(name) },
-      { new: true }
-    );
-    if (photo) {
-      products.photo.data = fs.readFileSync(photo.path);
-      products.photo.contentType = photo.type;
+    const product = await productModel.findById(req.params.pid);
+    if (!product) {
+      return res.status(404).send({ error: "Product not found" });
     }
-    await products.save();
+
+    const updatedFields = { ...req.fields, slug: slugify(name) };
+
+    if (yard) {
+      const existingYard = await yardModel.findById(yard);
+      if (!existingYard) {
+        return res.status(400).send({ error: "Invalid Yard ID" });
+      }
+      updatedFields.yard = yard;
+    }
+
+    if (length) {
+      const existingLength = await lengthModel.findById(length);
+      if (!existingLength) {
+        return res.status(400).send({ error: "Invalid Length ID" });
+      }
+      updatedFields.length = length;
+    }
+
+    if (photo) {
+      updatedFields.photo = {
+        data: fs.readFileSync(photo.path),
+        contentType: photo.type,
+      };
+    }
+
+    const updatedProduct = await productModel.findByIdAndUpdate(req.params.pid, updatedFields, { new: true });
+
     res.status(201).send({
       success: true,
       message: "Product Updated Successfully",
-      products,
+      updatedProduct,
     });
   } catch (error) {
     console.log(error);
     res.status(500).send({
       success: false,
       error,
-      message: "Error in Updte product",
+      message: "Error in updating product",
     });
   }
 };
@@ -205,7 +241,7 @@ export const productFiltersController = async (req, res) => {
     console.log(error);
     res.status(400).send({
       success: false,
-      message: "Error WHile Filtering Products",
+      message: "Error while filtering products",
       error,
     });
   }
@@ -246,7 +282,7 @@ export const productListController = async (req, res) => {
     console.log(error);
     res.status(400).send({
       success: false,
-      message: "error in per page ctrl",
+      message: "Error in per page controller",
       error,
     });
   }
@@ -255,7 +291,7 @@ export const productListController = async (req, res) => {
 export const searchProductController = async (req, res) => {
   try {
     const { keyword } = req.params;
-    const resutls = await productModel
+    const results = await productModel
       .find({
         $or: [
           { name: { $regex: keyword, $options: "i" } },
@@ -263,18 +299,18 @@ export const searchProductController = async (req, res) => {
         ],
       })
       .select("-photo");
-    res.json(resutls);
+    res.json(results);
   } catch (error) {
     console.log(error);
     res.status(400).send({
       success: false,
-      message: "Error In Search Product API",
+      message: "Error in Search Product API",
       error,
     });
   }
 };
 
-export const realtedProductController = async (req, res) => {
+export const relatedProductController = async (req, res) => {
   try {
     const { pid, cid } = req.params;
     const products = await productModel
@@ -284,7 +320,7 @@ export const realtedProductController = async (req, res) => {
       })
       .select("-photo")
       .limit(3)
-      .populate("category");
+      .populate("category yard length");
     res.status(200).send({
       success: true,
       products,
@@ -293,7 +329,7 @@ export const realtedProductController = async (req, res) => {
     console.log(error);
     res.status(400).send({
       success: false,
-      message: "error while geting related product",
+      message: "Error while getting related products",
       error,
     });
   }
@@ -302,7 +338,7 @@ export const realtedProductController = async (req, res) => {
 export const productCategoryController = async (req, res) => {
   try {
     const category = await categoryModel.findOne({ slug: req.params.slug });
-    const products = await productModel.find({ category }).populate("category");
+    const products = await productModel.find({ category }).populate("category yard length");
     res.status(200).send({
       success: true,
       category,
@@ -313,7 +349,7 @@ export const productCategoryController = async (req, res) => {
     res.status(400).send({
       success: false,
       error,
-      message: "Error While Getting products",
+      message: "Error while getting products",
     });
   }
 };
@@ -321,13 +357,9 @@ export const productCategoryController = async (req, res) => {
 export const getBestsellersController = async (req, res) => {
   try {
     const bestsellers = await productModel.find({ bestseller: true }).limit(10);
-
     if (!bestsellers || bestsellers.length === 0) {
-      return res
-        .status(404)
-        .json({ success: false, message: "No bestsellers found" });
+      return res.status(404).json({ success: false, message: "No bestsellers found" });
     }
-
     return res.json({ success: true, products: bestsellers });
   } catch (error) {
     console.error("Error fetching bestsellers:", error);

@@ -1,7 +1,5 @@
 import mongoose from "mongoose";
 
-const { Schema } = mongoose;
-
 const productSchema = new mongoose.Schema(
   {
     name: {
@@ -10,7 +8,7 @@ const productSchema = new mongoose.Schema(
     },
     slug: {
       type: String,
-      required: true,
+      unique: true,
     },
     description: {
       type: String,
@@ -20,24 +18,39 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    category: [{ type: Schema.Types.ObjectId, ref: "Category" }],
     quantity: {
       type: Number,
       required: true,
     },
-    photo: {
-      data: Buffer,
-      contentType: String,
-    },
     shipping: {
       type: Boolean,
+      required: true,
     },
     bestseller: {
       type: Boolean,
       default: false,
     },
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      required: true,
+    },
+    yard: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Yard",
+      required: false, 
+    },
+    length: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Length",
+      required: false, 
+    },
+    photo: {
+      data: Buffer,
+      contentType: String,
+    },
   },
   { timestamps: true }
 );
 
-export default mongoose.model("Products", productSchema);
+export default mongoose.model("Product", productSchema);
