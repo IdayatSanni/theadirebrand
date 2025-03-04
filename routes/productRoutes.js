@@ -10,7 +10,7 @@ import {
   productFiltersController,
   productListController,
   getBestsellersController,
-  realtedProductController,
+  relatedProductController,
   productCategoryController,
 } from "../controllers/productController.js";
 import { isAdmin, requireSignIn } from "../middlewares/authMiddleware.js";
@@ -18,7 +18,6 @@ import formidable from "express-formidable";
 import { searchProductController } from "../controllers/productController.js";
 
 const router = express.Router();
-
 
 router.post(
   "/create-product",
@@ -52,7 +51,7 @@ router.get("/product-list/:page", productListController);
 
 router.get("/search/:keyword", searchProductController);
 
-router.get("/related-product/:pid/:cid", realtedProductController);
+router.get("/related-product/:pid/:cid", relatedProductController);
 
 router.get("/bestsellers", getBestsellersController);
 

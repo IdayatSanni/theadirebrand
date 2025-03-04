@@ -6,6 +6,7 @@ import Policy from "./pages/Policy";
 import PageNotFound from "./pages/PageNotFound";
 import Register from "./pages/Auth/Register";
 import Login from "./pages/Auth/Login";
+import "mdb-ui-kit/css/mdb.min.css";
 import Dashboard from "./pages/user/Dashboard";
 import PrivateRoute from "./components/Routes/Private";
 import ForgotPasssword from "./pages/Auth/ForgotPassword";
@@ -28,6 +29,8 @@ import CategoryProduct from "./pages/CategoryProduct";
 import CartPage from "./pages/CartPage";
 import AdminOrders from "./pages/Admin/AdminOrders";
 import ShopPage from "./pages/ShopPage";
+import CreateYard from "./pages/Admin/CreateYard";
+import CreateLength from "./pages/Admin/CreateLength";
 
 function App() {
   return (
@@ -47,6 +50,8 @@ function App() {
       <Route path='/dashboard' element={<AdminRoute />}>
         <Route path='admin' element={<AdminDashboard />} />
         <Route path='admin/create-category' element={<CreateCategory />} />
+        <Route path='admin/create-yard' element={<CreateYard />} />
+        <Route path='admin/create-length' element={<CreateLength />} />
         <Route path='admin/create-product' element={<CreateProduct />} />
         <Route path='admin/product/:slug' element={<UpdateProduct />} />
         <Route path='admin/products' element={<Products />} />

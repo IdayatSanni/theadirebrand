@@ -35,7 +35,11 @@ body {
 
 .nav-link-custom {
   font-weight: bold;
-  color: #ff6f61 !important;
+  color: #ffffff !important;
+}
+.nav-link-custom:hover {
+  font-weight: bold;
+  color: #f6efeb !important;
 }
 
 #offcanvasNavbarDropdown-auth {
@@ -96,6 +100,33 @@ ul {
 
 .navbar-brand:hover {
   color: #792f04;
+}
+
+.cart-dropdown {
+  position: absolute;
+  width: 240px;
+  height: 340px;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border: 1px solid black;
+  background-color: white;
+  top: 80px;
+  right: 0;
+  z-index: 5;
+  .cart-items {
+    height: 240px;
+    display: flex;
+    flex-direction: column;
+    overflow: scroll;
+  }
+  .empty-message {
+    font-size: 18px;
+    margin: 50px auto;
+  }
+  button {
+    margin-top: auto;
+  }
 }
 
 .footer {

@@ -10,6 +10,8 @@ const { Option } = Select;
 const CreateProduct = () => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
+  const [yards, setYards] = useState([]);
+  const [lengths, setLengths] = useState([]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
@@ -18,6 +20,8 @@ const CreateProduct = () => {
   const [shipping, setShipping] = useState("");
   const [photo, setPhoto] = useState("");
   const [bestseller, setBestseller] = useState(false);
+  const [selectedYard, setSelectedYard] = useState("");
+  const [selectedLength, setSelectedLength] = useState("");
 
   const getAllCategory = async () => {
     try {
@@ -33,8 +37,34 @@ const CreateProduct = () => {
     }
   };
 
+  const getAllYards = async () => {
+    try {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_API}/api/v1/yard/get-yard`
+      );
+      setYards(data.yards);
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to load yards");
+    }
+  };
+
+  const getAllLengths = async () => {
+    try {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_API}/api/v1/length/get-length`
+      );
+      setLengths(data.lengths);
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to load lengths");
+    }
+  };
+
   useEffect(() => {
     getAllCategory();
+    getAllYards();
+    getAllLengths();
   }, []);
 
   const handleCreate = async (e) => {
@@ -49,6 +79,9 @@ const CreateProduct = () => {
       productData.append("category", category);
       productData.append("shipping", shipping);
       productData.append("bestseller", bestseller);
+      productData.append("yard", selectedYard);
+      productData.append("length", selectedLength);
+
       const { data } = await axios.post(
         `${import.meta.env.VITE_API}/api/v1/product/create-product`,
         productData
@@ -87,6 +120,39 @@ const CreateProduct = () => {
                   </Option>
                 ))}
               </Select>
+
+              {/* Yard Selection */}
+              <div className='mb-3'>
+                <Select
+                  placeholder='Select Yard'
+                  size='large'
+                  className='form-select mb-3'
+                  onChange={(value) => setSelectedYard(value)}>
+                  <Option value=''>Select Yard</Option>
+                  {yards?.map((yard) => (
+                    <Option key={yard._id} value={yard._id}>
+                      {yard.name}
+                    </Option>
+                  ))}
+                </Select>
+              </div>
+
+              {/* Length Selection */}
+              <div className='mb-3'>
+                <Select
+                  placeholder='Select Length'
+                  size='large'
+                  className='form-select mb-3'
+                  onChange={(value) => setSelectedLength(value)}>
+                  <Option value=''>Select Length</Option>
+                  {lengths?.map((length) => (
+                    <Option key={length._id} value={length._id}>
+                      {length.name}
+                    </Option>
+                  ))}
+                </Select>
+              </div>
+
               <div className='mb-3'>
                 <label className='btn btn-outline-secondary col-md-12'>
                   {photo ? photo.name : "Upload Photo"}

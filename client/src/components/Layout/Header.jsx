@@ -40,9 +40,9 @@ const Header = () => {
               Free shipping for orders above 50,0000
             </div>
 
-            <div className='d-lg-block'>
+            <div className='d-lg-block '>
               {!auth?.user ? (
-                <div>
+                <div className='d-flex justify-content-between gap-2'>
                   <Nav.Link
                     as={Link}
                     to='/register'

@@ -11,6 +11,8 @@ const UpdateProduct = () => {
   const navigate = useNavigate();
   const params = useParams();
   const [categories, setCategories] = useState([]);
+  const [yards, setYards] = useState([]);
+  const [lengths, setLengths] = useState([]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
@@ -19,6 +21,8 @@ const UpdateProduct = () => {
   const [shipping, setShipping] = useState("");
   const [photo, setPhoto] = useState("");
   const [id, setId] = useState("");
+  const [selectedYard, setSelectedYard] = useState("");
+  const [selectedLength, setSelectedLength] = useState("");
 
   const getSingleProduct = async () => {
     try {
@@ -29,14 +33,16 @@ const UpdateProduct = () => {
       setId(data.product._id);
       setDescription(data.product.description);
       setPrice(data.product.price);
-      setPrice(data.product.price);
       setQuantity(data.product.quantity);
       setShipping(data.product.shipping);
       setCategory(data.product.category._id);
+      setSelectedYard(data.product.yard);
+      setSelectedLength(data.product.length);
     } catch (error) {
       console.log(error);
     }
   };
+
   useEffect(() => {
     getSingleProduct();
   }, []);
@@ -51,12 +57,38 @@ const UpdateProduct = () => {
       }
     } catch (error) {
       console.log(error);
-      toast.error("Something wwent wrong in getting catgeory");
+      toast.error("Something went wrong in getting category");
+    }
+  };
+
+  const getAllYards = async () => {
+    try {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_API}/api/v1/yard/get-yard`
+      );
+      setYards(data.yards);
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to load yards");
+    }
+  };
+
+  const getAllLengths = async () => {
+    try {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_API}/api/v1/length/get-length`
+      );
+      setLengths(data.lengths);
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to load lengths");
     }
   };
 
   useEffect(() => {
     getAllCategory();
+    getAllYards();
+    getAllLengths();
   }, []);
 
   const handleUpdate = async (e) => {
@@ -67,40 +99,44 @@ const UpdateProduct = () => {
       productData.append("description", description);
       productData.append("price", price);
       productData.append("quantity", quantity);
-      photo && productData.append("photo", photo);
+      if (photo) productData.append("photo", photo);
       productData.append("category", category);
-      const { data } = axios.put(
+      productData.append("yard", selectedYard);
+      productData.append("length", selectedLength);
+
+      const { data } = await axios.put(
         `${import.meta.env.VITE_API}/api/v1/product/update-product/${id}`,
         productData
       );
       if (data?.success) {
-        toast.error(data?.message);
-      } else {
         toast.success("Product Updated Successfully");
         navigate("/dashboard/admin/products");
+      } else {
+        toast.error("Something went wrong");
       }
     } catch (error) {
       console.log(error);
-      toast.error("something went wrong");
+      toast.error("Something went wrong");
     }
   };
 
   const handleDelete = async () => {
     try {
-      let answer = window.prompt("Are You Sure want to delete this product ? ");
+      let answer = window.prompt("Are You Sure want to delete this product?");
       if (!answer) return;
       const { data } = await axios.delete(
         `${import.meta.env.VITE_API}/api/v1/product/delete-product/${id}`
       );
-      toast.success("Product DEleted Succfully");
+      toast.success("Product Deleted Successfully");
       navigate("/dashboard/admin/products");
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong");
     }
   };
+
   return (
-    <LayoutTheme title={"Dashboard - Create Product"}>
+    <LayoutTheme title={"Dashboard - Update Product"}>
       <div className='container-fluid m-3 p-3'>
         <div className='row'>
           <div className='col-md-3'>
@@ -115,9 +151,7 @@ const UpdateProduct = () => {
                 size='large'
                 showSearch
                 className='form-select mb-3'
-                onChange={(value) => {
-                  setCategory(value);
-                }}
+                onChange={(value) => setCategory(value)}
                 value={category}>
                 {categories?.map((c) => (
                   <Option key={c._id} value={c._id}>
@@ -125,6 +159,41 @@ const UpdateProduct = () => {
                   </Option>
                 ))}
               </Select>
+
+              {/* Yard Selection */}
+              <div className='mb-3'>
+                <Select
+                  placeholder='Select Yard'
+                  size='large'
+                  className='form-select mb-3'
+                  onChange={(value) => setSelectedYard(value)}
+                  value={selectedYard}>
+                  <Option value=''>Select Yard</Option>
+                  {yards?.map((yard) => (
+                    <Option key={yard._id} value={yard._id}>
+                      {yard.name}
+                    </Option>
+                  ))}
+                </Select>
+              </div>
+
+              {/* Length Selection */}
+              <div className='mb-3'>
+                <Select
+                  placeholder='Select Length'
+                  size='large'
+                  className='form-select mb-3'
+                  onChange={(value) => setSelectedLength(value)}
+                  value={selectedLength}>
+                  <Option value=''>Select Length</Option>
+                  {lengths?.map((length) => (
+                    <Option key={length._id} value={length._id}>
+                      {length.name}
+                    </Option>
+                  ))}
+                </Select>
+              </div>
+
               <div className='mb-3'>
                 <label className='btn btn-outline-secondary col-md-12'>
                   {photo ? photo.name : "Upload Photo"}
@@ -164,16 +233,15 @@ const UpdateProduct = () => {
                 <input
                   type='text'
                   value={name}
-                  placeholder='write a name'
+                  placeholder='Write a name'
                   className='form-control'
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
               <div className='mb-3'>
                 <textarea
-                  type='text'
                   value={description}
-                  placeholder='write a description'
+                  placeholder='Write a description'
                   className='form-control'
                   onChange={(e) => setDescription(e.target.value)}
                 />
@@ -183,7 +251,7 @@ const UpdateProduct = () => {
                 <input
                   type='number'
                   value={price}
-                  placeholder='write a Price'
+                  placeholder='Write a price'
                   className='form-control'
                   onChange={(e) => setPrice(e.target.value)}
                 />
@@ -192,7 +260,7 @@ const UpdateProduct = () => {
                 <input
                   type='number'
                   value={quantity}
-                  placeholder='write a quantity'
+                  placeholder='Write a quantity'
                   className='form-control'
                   onChange={(e) => setQuantity(e.target.value)}
                 />
@@ -200,13 +268,11 @@ const UpdateProduct = () => {
               <div className='mb-3'>
                 <Select
                   variant={false}
-                  placeholder='Select Shipping '
+                  placeholder='Select Shipping'
                   size='large'
                   showSearch
                   className='form-select mb-3'
-                  onChange={(value) => {
-                    setShipping(value);
-                  }}
+                  onChange={(value) => setShipping(value)}
                   value={shipping ? "yes" : "No"}>
                   <Option value='0'>No</Option>
                   <Option value='1'>Yes</Option>

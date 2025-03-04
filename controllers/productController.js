@@ -1,22 +1,23 @@
 import productModel from "../models/productModel.js";
 import categoryModel from "../models/categoryModel.js";
 import yardModel from "../models/yardModel.js";
+import mongoose from "mongoose";
 import lengthModel from "../models/lengthModel.js";
 import fs from "fs";
 import slugify from "slugify";
 
 export const createProductController = async (req, res) => {
   try {
-    const { 
-      name, 
-      description, 
-      price, 
-      category, 
-      quantity, 
-      shipping, 
-      bestseller, 
-      yard, 
-      length 
+    const {
+      name,
+      description,
+      price,
+      category,
+      quantity,
+      shipping,
+      bestseller,
+      yard,
+      length,
     } = req.fields;
     const { photo } = req.files;
 
@@ -28,11 +29,15 @@ export const createProductController = async (req, res) => {
       case !price:
         return res.status(500).send({ error: "Price is Required" });
       case !category || category.length === 0:
-        return res.status(500).send({ error: "At least one Category is Required" });
+        return res
+          .status(500)
+          .send({ error: "At least one Category is Required" });
       case !quantity:
         return res.status(500).send({ error: "Quantity is Required" });
       case photo && photo.size > 1000000:
-        return res.status(500).send({ error: "Photo is required and should be less than 1MB" });
+        return res
+          .status(500)
+          .send({ error: "Photo is required and should be less than 1MB" });
     }
 
     let yardData = null;
@@ -161,7 +166,16 @@ export const deleteProductController = async (req, res) => {
 
 export const updateProductController = async (req, res) => {
   try {
-    const { name, description, price, category, quantity, shipping, yard, length } = req.fields;
+    const {
+      name,
+      description,
+      price,
+      category,
+      quantity,
+      shipping,
+      yard,
+      length,
+    } = req.fields;
     const { photo } = req.files;
 
     switch (true) {
@@ -176,7 +190,9 @@ export const updateProductController = async (req, res) => {
       case !quantity:
         return res.status(500).send({ error: "Quantity is Required" });
       case photo && photo.size > 1000000:
-        return res.status(500).send({ error: "Photo is required and should be less than 1MB" });
+        return res
+          .status(500)
+          .send({ error: "Photo is required and should be less than 1MB" });
     }
 
     const product = await productModel.findById(req.params.pid);
@@ -209,7 +225,11 @@ export const updateProductController = async (req, res) => {
       };
     }
 
-    const updatedProduct = await productModel.findByIdAndUpdate(req.params.pid, updatedFields, { new: true });
+    const updatedProduct = await productModel.findByIdAndUpdate(
+      req.params.pid,
+      updatedFields,
+      { new: true }
+    );
 
     res.status(201).send({
       success: true,
@@ -229,10 +249,22 @@ export const updateProductController = async (req, res) => {
 export const productFiltersController = async (req, res) => {
   try {
     const { checked, radio } = req.body;
+
     let args = {};
-    if (checked.length > 0) args.category = checked;
-    if (radio.length) args.price = { $gte: radio[0], $lte: radio[1] };
+
+    // Handle category filter
+    if (checked.length > 0) {
+      args.category = { $in: checked }; // Assuming checked is an array of ObjectId values
+    }
+
+    // Handle price range filter
+    if (radio.length) {
+      args.price = { $gte: radio[0], $lte: radio[1] };
+    }
+
+    // Fetch the products with the applied filters
     const products = await productModel.find(args);
+
     res.status(200).send({
       success: true,
       products,
@@ -338,7 +370,9 @@ export const relatedProductController = async (req, res) => {
 export const productCategoryController = async (req, res) => {
   try {
     const category = await categoryModel.findOne({ slug: req.params.slug });
-    const products = await productModel.find({ category }).populate("category yard length");
+    const products = await productModel
+      .find({ category })
+      .populate("category yard length");
     res.status(200).send({
       success: true,
       category,
@@ -358,7 +392,9 @@ export const getBestsellersController = async (req, res) => {
   try {
     const bestsellers = await productModel.find({ bestseller: true }).limit(10);
     if (!bestsellers || bestsellers.length === 0) {
-      return res.status(404).json({ success: false, message: "No bestsellers found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "No bestsellers found" });
     }
     return res.json({ success: true, products: bestsellers });
   } catch (error) {

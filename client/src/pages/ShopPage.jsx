@@ -6,6 +6,9 @@ import axios from "axios";
 import { Checkbox, Radio } from "antd";
 import { Prices } from "../components/Prices";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+
 const ShopPage = () => {
   const navigate = useNavigate();
   const [auth, setAuth] = useAuth();
@@ -89,12 +92,13 @@ const ShopPage = () => {
     }
     setChecked(all);
   };
-  useEffect(() => {
-    if (!checked.length || !radio.length) getAllProducts();
-  }, [checked.length, radio.length]);
 
   useEffect(() => {
-    if (checked.length || radio.length) filterProduct();
+    if (checked.length || radio.length) {
+      filterProduct();
+    } else {
+      getAllProducts(); // Get all products when no filters are selected
+    }
   }, [checked, radio]);
 
   const filterProduct = async () => {
@@ -106,11 +110,24 @@ const ShopPage = () => {
           radio,
         }
       );
+
+      if (data?.products.length === 0) {
+        toast.info("No products found matching your filters");
+      }
+
       setProducts(data?.products);
     } catch (error) {
-      console.log(error);
+      console.log("Error while filtering products:", error.response?.data);
+      toast.error("Error filtering products");
     }
   };
+
+  const handleAddToCart = (product) => {
+    setCart([...cart, product]);
+    localStorage.setItem("cart", JSON.stringify([...cart, product]));
+    toast.success("Item Added to cart");
+  };
+
   return (
     <LayoutTheme title={"Home"}>
       <div className='container-fluid row mt-3'>
@@ -136,7 +153,8 @@ const ShopPage = () => {
               ))}
             </Radio.Group>
           </div>
-          <div className='d-flex flex-column'>
+
+          <div className='d-flex flex-column mt-4'>
             <button
               className='btn btn-danger'
               onClick={() => window.location.reload()}>
@@ -144,45 +162,42 @@ const ShopPage = () => {
             </button>
           </div>
         </div>
+
         <div className='col-md-9'>
           <h1 className='text-center'>All Products</h1>
+          {products.length === 0 && (
+            <p className='text-center'>No products found</p>
+          )}
           <div className='d-flex flex-wrap'>
             {products?.map((p) => (
-              <div className='card m-2' style={{ width: "18rem" }}>
-                <img
-                  src={`${
-                    import.meta.env.VITE_API
-                  }/api/v1/product/product-photo/${p._id}`}
-                  className='card-img-top'
-                  alt={p.name}
-                />
-                <div className='card-body'>
-                  <h5 className='card-title'>{p.name}</h5>
-                  <p className='card-text'>
-                    {p.description.substring(0, 30)}...
-                  </p>
-                  <p className='card-text'> ₦ {p.price}</p>
-                  <button
-                    class='btn btn-primary ms-1'
-                    onClick={() => navigate(`/product/${p.slug}`)}>
-                    More Details
-                  </button>
-                  <button
-                    className='btn btn-secondary ms-1'
-                    onClick={() => {
-                      setCart([...cart, p]);
-                      localStorage.setItem(
-                        "cart",
-                        JSON.stringify([...cart, p])
-                      );
-                      toast.success("Item Added to cart");
-                    }}>
-                    ADD TO CART
-                  </button>
-                </div>
+              <div className='card m-2' style={{ width: "18rem" }} key={p._id}>
+                <Link
+                  to={`/product/${p.slug}`}
+                  style={{ textDecoration: "none" }}>
+                  <img
+                    src={`${
+                      import.meta.env.VITE_API
+                    }/api/v1/product/product-photo/${p._id}`}
+                    className='card-img-top'
+                    alt={p.name}
+                  />
+                  <div className='card-body'>
+                    <h5 className='card-title'>{p.name}</h5>
+                    <p className='card-text'>
+                      {p.description.substring(0, 30)}...
+                    </p>
+                    <p className='card-text'> ₦ {p.price}</p>
+                  </div>
+                </Link>
+                <button
+                  className='btn btn-secondary ms-1'
+                  onClick={() => handleAddToCart(p)}>
+                  ADD TO CART
+                </button>
               </div>
             ))}
           </div>
+
           <div className='m-2 p-3'>
             {products && products.length < total && (
               <button
