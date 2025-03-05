@@ -1,18 +1,19 @@
 import LayoutTheme from "../components/Layout/LayoutTheme";
 import { useAuth } from "../context/auth";
 import React, { useState, useEffect } from "react";
-import { useCart } from "../context/cart";
+import { useCart } from "../context/cart.jsx";
 import axios from "axios";
 import { Checkbox, Radio } from "antd";
 import { Prices } from "../components/Prices";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import CartDropdown from "../components/CartDropdown";
 
 const ShopPage = () => {
   const navigate = useNavigate();
   const [auth, setAuth] = useAuth();
-  const [cart, setCart] = useCart();
+  const { cart, setCart } = useCart();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [checked, setChecked] = useState([]);
@@ -20,6 +21,7 @@ const ShopPage = () => {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   const getAllCategory = async () => {
     try {
@@ -97,7 +99,7 @@ const ShopPage = () => {
     if (checked.length || radio.length) {
       filterProduct();
     } else {
-      getAllProducts(); // Get all products when no filters are selected
+      getAllProducts();
     }
   }, [checked, radio]);
 
@@ -123,9 +125,18 @@ const ShopPage = () => {
   };
 
   const handleAddToCart = (product) => {
-    setCart([...cart, product]);
-    localStorage.setItem("cart", JSON.stringify([...cart, product]));
+    setCart([...cart, { ...product, quantity: 1 }]);
+    localStorage.setItem(
+      "cart",
+      JSON.stringify([...cart, { ...product, quantity: 1 }])
+    );
+    console.log("Item Added to Cart", product);
     toast.success("Item Added to cart");
+    toggleCartVisibility(); // Open the cart modal
+  };
+
+  const toggleCartVisibility = () => {
+    setIsCartOpen(!isCartOpen);
   };
 
   return (
@@ -212,6 +223,11 @@ const ShopPage = () => {
           </div>
         </div>
       </div>
+
+      <CartDropdown
+        isCartOpen={isCartOpen}
+        toggleCartVisibility={toggleCartVisibility}
+      />
     </LayoutTheme>
   );
 };

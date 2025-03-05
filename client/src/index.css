@@ -129,6 +129,10 @@ ul {
   }
 }
 
+.modal.show {
+  z-index: 1051;
+}
+
 .footer {
   color: white;
   padding: 25px;

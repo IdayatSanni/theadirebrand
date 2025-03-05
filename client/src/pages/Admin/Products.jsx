@@ -26,36 +26,52 @@ const Products = () => {
 
   return (
     <LayoutTheme title={"Products"}>
-      <div className='row'>
-        <div className='col-md-3'>
-          <AdminMenu />
-        </div>
-        <div className='col-md-9'>
-          <h1 className='text-center'>All Products List</h1>
-          <div className='d-flex'>
-            {products?.map((p) => (
-              <Link
-                key={p._id}
-                to={`/dashboard/admin/product/${p.slug}`}
-                className='product-link'>
-                <div className='card m-2' style={{ width: "18rem" }}>
-                  <img
-                    src={`${
-                      import.meta.env.VITE_API
-                    }/api/v1/product/product-photo/${p._id}`}
-                    className='card-img-top'
-                    alt={p.name}
-                  />
-                  <div className='card-body'>
-                    <h5 className='card-title'>{p.name}</h5>
-                    <p className='card-text'>{p.description}</p>
-                    <p className='card-text'>Category: {p.category?.name}</p>
-                    <p className='card-text'>Yard: {p.yard?.name}</p>
-                    <p className='card-text'>Length: {p.length?.name}</p>
-                  </div>
-                </div>
-              </Link>
-            ))}
+      <div className='container'>
+        <div className='row'>
+          <div className='col-md-3'>
+            <AdminMenu />
+          </div>
+          <div className='col-md-9'>
+            <h1 className='text-center'>All Products List</h1>
+            <div className='table-responsive'>
+              <table className='table table-bordered'>
+                <thead>
+                  <tr>
+                    <th>Photo</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {products?.map((p) => (
+                    <tr key={p._id}>
+                      <td>
+                        <img
+                          src={`${
+                            import.meta.env.VITE_API
+                          }/api/v1/product/product-photo/${p._id}`}
+                          className='img-fluid'
+                          style={{ width: "50px", height: "50px" }}
+                          alt={p.name}
+                        />
+                      </td>
+                      <td>{p.name}</td>
+                      <td>{p.category?.name}</td>
+                      <td>{p.price}</td>
+                      <td>
+                        <Link
+                          to={`/dashboard/admin/product/${p.slug}`}
+                          className='btn btn-primary'>
+                          Edit Product
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>

@@ -6,7 +6,8 @@ import { useAuth } from "../context/auth";
 import { useNavigate } from "react-router-dom";
 const CartPage = () => {
   const [auth, setAuth] = useAuth();
-  const [cart, setCart] = useCart();
+  const { cart, setCart } = useCart();
+
   const [paymentOption, setPaymentOption] = useState("delivery");
   const navigate = useNavigate();
 

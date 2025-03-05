@@ -100,14 +100,14 @@ const CreateProduct = () => {
 
   return (
     <LayoutTheme title={"Dashboard - Create Product"}>
-      <div className='container-fluid m-3 p-3'>
+      <div className='container m-3 p-3'>
         <div className='row'>
           <div className='col-md-3'>
             <AdminMenu />
           </div>
           <div className='col-md-9'>
             <h1>Create Product</h1>
-            <div className='m-1 w-75'>
+            <div className='m-1'>
               <Select
                 mode='multiple'
                 placeholder='Select Categories'
@@ -121,7 +121,6 @@ const CreateProduct = () => {
                 ))}
               </Select>
 
-              {/* Yard Selection */}
               <div className='mb-3'>
                 <Select
                   placeholder='Select Yard'
@@ -137,7 +136,6 @@ const CreateProduct = () => {
                 </Select>
               </div>
 
-              {/* Length Selection */}
               <div className='mb-3'>
                 <Select
                   placeholder='Select Length'
@@ -171,7 +169,8 @@ const CreateProduct = () => {
                     <img
                       src={URL.createObjectURL(photo)}
                       alt='product_photo'
-                      height={"200px"}
+                      height={"50px"}
+                      width={"50px"}
                       className='img img-responsive'
                     />
                   </div>
