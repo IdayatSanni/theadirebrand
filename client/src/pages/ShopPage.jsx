@@ -6,9 +6,9 @@ import axios from "axios";
 import { Checkbox, Radio } from "antd";
 import { Prices } from "../components/Prices";
 import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import CartDropdown from "../components/CartDropdown";
+import ProductCard from "../components/ProductCard"; // Import ProductCard component
 
 const ShopPage = () => {
   const navigate = useNavigate();
@@ -132,7 +132,7 @@ const ShopPage = () => {
     );
     console.log("Item Added to Cart", product);
     toast.success("Item Added to cart");
-    toggleCartVisibility(); // Open the cart modal
+    toggleCartVisibility();
   };
 
   const toggleCartVisibility = () => {
@@ -182,29 +182,19 @@ const ShopPage = () => {
           <div className='d-flex flex-wrap'>
             {products?.map((p) => (
               <div className='card m-2' style={{ width: "18rem" }} key={p._id}>
-                <Link
-                  to={`/product/${p.slug}`}
-                  style={{ textDecoration: "none" }}>
-                  <img
-                    src={`${
-                      import.meta.env.VITE_API
-                    }/api/v1/product/product-photo/${p._id}`}
-                    className='card-img-top'
-                    alt={p.name}
-                  />
-                  <div className='card-body'>
-                    <h5 className='card-title'>{p.name}</h5>
-                    <p className='card-text'>
-                      {p.description.substring(0, 30)}...
-                    </p>
-                    <p className='card-text'> ₦ {p.price}</p>
-                  </div>
-                </Link>
-                <button
-                  className='btn btn-secondary ms-1'
-                  onClick={() => handleAddToCart(p)}>
-                  ADD TO CART
-                </button>
+                <ProductCard
+                  imageSrc={`${
+                    import.meta.env.VITE_API
+                  }/api/v1/product/product-photo/${p._id}`}
+                  productName={p.name}
+                  productCategory={p.category.name}
+                  originalPrice={p.price}
+                  discountedPrice={p.discountedPrice}
+                  availableQuantity={p.quantity}
+                  productSlug={p.slug}
+                  showCategory={true}
+                  showPrice={true}
+                />
               </div>
             ))}
           </div>

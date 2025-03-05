@@ -3,7 +3,7 @@ import { useCart } from "../context/cart";
 
 const CartDropdown = () => {
   const { cart, isCartOpen, toggleCartVisibility } = useCart();
-  
+
   if (!isCartOpen) return null;
 
   return (
@@ -11,8 +11,7 @@ const CartDropdown = () => {
       className='modal show'
       tabIndex='-1'
       role='dialog'
-      style={{ display: "block" }} 
-    >
+      style={{ display: "block" }}>
       <div className='modal-dialog' role='document'>
         <div className='modal-content'>
           <div className='modal-header'>
@@ -20,7 +19,6 @@ const CartDropdown = () => {
             <button
               type='button'
               className='close'
-              data-dismiss='modal'
               aria-label='Close'
               onClick={toggleCartVisibility}>
               <span aria-hidden='true'>&times;</span>

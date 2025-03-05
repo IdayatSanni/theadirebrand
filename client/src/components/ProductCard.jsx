@@ -1,5 +1,7 @@
 import React from "react";
-import { MDBCard, MDBCardBody, MDBCardImage, MDBIcon } from "mdb-react-ui-kit"; // Import the required components
+import { MDBCard, MDBCardBody, MDBCardImage, MDBIcon } from "mdb-react-ui-kit";
+import { useCart } from "../context/cart";
+import { Link } from "react-router-dom";
 
 const ProductCard = ({
   imageSrc,
@@ -11,53 +13,119 @@ const ProductCard = ({
   rating,
   comboOfferText,
   comboOfferCount,
+  productSlug,
+  showCategory = true,
+  showPrice = true,
 }) => {
+  const { addToCart, isCartOpen, toggleCartVisibility, cart } = useCart();
+
+  const handleAddToCart = () => {
+    const product = {
+      name: productName,
+      price: discountedPrice || originalPrice,
+      image: imageSrc,
+      quantity: 1,
+      productSlug,
+    };
+    addToCart(product);
+  };
+
   return (
-    <MDBCard>
-      <div className="d-flex justify-content-between p-3">
-        <p className="lead mb-0">{comboOfferText}</p>
-        <div
-          className="bg-info rounded-circle d-flex align-items-center justify-content-center shadow-1-strong"
-          style={{ width: "35px", height: "35px" }}
-        >
-          <p className="text-white mb-0 small">{comboOfferCount}</p>
-        </div>
-      </div>
-      <MDBCardImage src={imageSrc} position="top" alt={productName} />
-      <MDBCardBody>
-        <div className="d-flex justify-content-between">
-          <p className="small">
-            <a href="#!" className="text-muted">
-              {productCategory}
-            </a>
-          </p>
-          <p className="small text-danger">
-            <s>${originalPrice}</s>
-          </p>
-        </div>
+    <>
+      <Link to={`/product/${productSlug}`} style={{ textDecoration: "none" }}>
+        <MDBCard style={{ width: "300px" }}>
+          <MDBCardImage
+            src={imageSrc}
+            position='top'
+            className='img-fluid p-3'
+            alt={productName}
+            style={{ width: "300px", height: "180px" }}
+          />
+          <MDBCardBody>
+            {showCategory && (
+              <div className='d-flex justify-content-between'>
+                <p className='small'>
+                  <a href='#!' className='text-muted'>
+                    {productCategory}
+                  </a>
+                </p>
+              </div>
+            )}
+            <div className='d-flex justify-content-between mb-3'>
+              <h5 className='mb-0'>{productName}</h5>
+              {showPrice && (
+                <h5 className='text-dark mb-0'>
+                  {discountedPrice
+                    ? `₦${discountedPrice}`
+                    : `₦${originalPrice}`}
+                </h5>
+              )}
+            </div>
+            <button
+              className='btn btn-secondary ms-1 search-button'
+              onClick={handleAddToCart}>
+              ADD TO CART
+            </button>
+          </MDBCardBody>
+        </MDBCard>
 
-        <div className="d-flex justify-content-between mb-3">
-          <h5 className="mb-0">{productName}</h5>
-          <h5 className="text-dark mb-0">${discountedPrice}</h5>
-        </div>
-
-        <div className="d-flex justify-content-between mb-2">
-          <p className="text-muted mb-0">
-            Available: <span className="fw-bold">{availableQuantity}</span>
-          </p>
-          <div className="ms-auto text-warning">
-            {[...Array(5)].map((_, index) => (
-              <MDBIcon
-                key={index}
-                fas
-                icon="star"
-                className={index < rating ? "text-warning" : "text-muted"}
-              />
-            ))}
+        {isCartOpen && (
+          <div
+            className='modal show'
+            tabIndex='-1'
+            role='dialog'
+            style={{ display: "block" }}>
+            <div className='modal-dialog' role='document'>
+              <div className='modal-content'>
+                <div className='modal-header'>
+                  <h5 className='modal-title'>Your Cart</h5>
+                  <button
+                    type='button'
+                    className='close'
+                    data-dismiss='modal'
+                    aria-label='Close'
+                    onClick={toggleCartVisibility}>
+                    <span aria-hidden='true'>&times;</span>
+                  </button>
+                </div>
+                <div className='modal-body'>
+                  {cart.length ? (
+                    <ul className='list-group'>
+                      {cart.map((item, index) => (
+                        <li
+                          key={index}
+                          className='list-group-item d-flex justify-content-between align-items-center'>
+                          <span>{item.name}</span>
+                          <span>
+                            {item.quantity} x ₦{item.price}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className='text-center'>Your cart is empty</p>
+                  )}
+                </div>
+                <div className='modal-footer'>
+                  <button
+                    type='button'
+                    className='btn btn-secondary'
+                    onClick={toggleCartVisibility}>
+                    Close
+                  </button>
+                  <button
+                    type='button'
+                    className='btn btn-primary'
+                    onClick={toggleCartVisibility}>
+                    Go to Checkout
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </MDBCardBody>
-    </MDBCard>
+        )}
+      </Link>
+    </>
   );
 };
 
