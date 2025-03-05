@@ -7,10 +7,10 @@ import { Button } from "bootstrap/dist/js/bootstrap.bundle.min";
 const CartPage = () => {
   const { cart, removeFromCart, increaseQuantity, decreaseQuantity } =
     useCart();
-  const [auth] = useAuth(); // Use AuthContext to access user data
+  const [auth] = useAuth();
 
   const [paymentMethod, setPaymentMethod] = useState("payment_on_delivery");
-  const [address, setAddress] = useState(auth.user?.address || ""); // Default to user's address if signed in
+  const [address, setAddress] = useState(auth.user?.address || "");
 
   const totalPrice = () => {
     return cart
@@ -100,7 +100,6 @@ const CartPage = () => {
             <hr />
             <h4>Total: {totalPrice()}</h4>
 
-            {/* Payment Method Section */}
             <div className='mt-4'>
               <label htmlFor='paymentMethod' className='form-label'>
                 Select Payment Method
@@ -111,12 +110,24 @@ const CartPage = () => {
                 value={paymentMethod}
                 onChange={(e) => setPaymentMethod(e.target.value)}>
                 <option value='payment_on_delivery'>Payment on Delivery</option>
-                {/* Add other payment methods here if needed */}
-                {/* <option value="online_payment">Online Payment</option> */}
               </select>
             </div>
-
-            {/* Address Section */}
+            <div className='mt-4'>
+              <label htmlFor='address' className='form-label'>
+                Full Name
+              </label>
+              {auth.user ? (
+                <h4>{auth.user?.name}</h4>
+              ) : (
+                <textarea
+                  id='full-name'
+                  className='form-control'
+                  placeholder='Enter your name'
+                  value={address}
+                  onChange={handleAddressChange}
+                />
+              )}
+            </div>
             <div className='mt-4'>
               <label htmlFor='address' className='form-label'>
                 Shipping Address
@@ -133,6 +144,7 @@ const CartPage = () => {
                 />
               )}
             </div>
+
             <div>
               <h3>Place Order</h3>
             </div>

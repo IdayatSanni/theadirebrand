@@ -31,6 +31,7 @@ import AdminOrders from "./pages/Admin/AdminOrders";
 import ShopPage from "./pages/ShopPage";
 import CreateYard from "./pages/Admin/CreateYard";
 import CreateLength from "./pages/Admin/CreateLength";
+import OrderPage from "./pages/OrderPage";
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
       <Route path='/categories' element={<Categories />} />
       <Route path='/category/:slug' element={<CategoryProduct />} />
       <Route path='/cart' element={<CartPage />} />
+      <Route path='/order' element={<OrderPage />} />
       <Route path='/dashboard' element={<PrivateRoute />}>
         <Route path='user' element={<Dashboard />} />
         <Route path='user/orders' element={<Orders />} />
