@@ -37,18 +37,14 @@ const ProductCard = ({
           <MDBCardImage
             src={imageSrc}
             position='top'
-            className='img-fluid p-3'
+            className='img-fluid pt-3'
             alt={productName}
             style={{ width: "300px", height: "180px" }}
           />
           <MDBCardBody>
             {showCategory && (
               <div className='d-flex justify-content-between'>
-                <p className='small'>
-                  <a href='#!' className='text-muted'>
-                    {productCategory}
-                  </a>
-                </p>
+                <p className='small'>{productCategory}</p>
               </div>
             )}
             <div className='d-flex justify-content-between mb-3'>
@@ -68,63 +64,62 @@ const ProductCard = ({
             </button>
           </MDBCardBody>
         </MDBCard>
-
-        {isCartOpen && (
-          <div
-            className='modal show'
-            tabIndex='-1'
-            role='dialog'
-            style={{ display: "block" }}>
-            <div className='modal-dialog' role='document'>
-              <div className='modal-content'>
-                <div className='modal-header'>
-                  <h5 className='modal-title'>Your Cart</h5>
-                  <button
-                    type='button'
-                    className='close'
-                    data-dismiss='modal'
-                    aria-label='Close'
-                    onClick={toggleCartVisibility}>
-                    <span aria-hidden='true'>&times;</span>
-                  </button>
-                </div>
-                <div className='modal-body'>
-                  {cart.length ? (
-                    <ul className='list-group'>
-                      {cart.map((item, index) => (
-                        <li
-                          key={index}
-                          className='list-group-item d-flex justify-content-between align-items-center'>
-                          <span>{item.name}</span>
-                          <span>
-                            {item.quantity} x ₦{item.price}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className='text-center'>Your cart is empty</p>
-                  )}
-                </div>
-                <div className='modal-footer'>
-                  <button
-                    type='button'
-                    className='btn btn-secondary'
-                    onClick={toggleCartVisibility}>
-                    Close
-                  </button>
-                  <button
-                    type='button'
-                    className='btn btn-primary'
-                    onClick={toggleCartVisibility}>
-                    Go to Checkout
-                  </button>
-                </div>
+      </Link>
+      {isCartOpen && (
+        <div
+          className='modal show'
+          tabIndex='-1'
+          role='dialog'
+          style={{ display: "block" }}>
+          <div className='modal-dialog' role='document'>
+            <div className='modal-content'>
+              <div className='modal-header'>
+                <h5 className='modal-title'>Your Cart</h5>
+                <button
+                  type='button'
+                  className='close'
+                  data-dismiss='modal'
+                  aria-label='Close'
+                  onClick={toggleCartVisibility}>
+                  <span aria-hidden='true'>&times;</span>
+                </button>
+              </div>
+              <div className='modal-body'>
+                {cart.length ? (
+                  <ul className='list-group'>
+                    {cart.map((item, index) => (
+                      <li
+                        key={index}
+                        className='list-group-item d-flex justify-content-between align-items-center'>
+                        <span>{item.name}</span>
+                        <span>
+                          {item.quantity} x ₦{item.price}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className='text-center'>Your cart is empty</p>
+                )}
+              </div>
+              <div className='modal-footer'>
+                <button
+                  type='button'
+                  className='btn btn-secondary'
+                  onClick={toggleCartVisibility}>
+                  Close
+                </button>
+                <button
+                  type='button'
+                  className='btn btn-primary'
+                  onClick={toggleCartVisibility}>
+                  Go to Checkout
+                </button>
               </div>
             </div>
           </div>
-        )}
-      </Link>
+        </div>
+      )}
     </>
   );
 };
