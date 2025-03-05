@@ -1,68 +1,63 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import LayoutTheme from "../components/Layout/LayoutTheme";
 import { useCart } from "../context/cart";
-import { useAuth } from "../context/auth";
-import { useNavigate } from "react-router-dom";
-const CartPage = () => {
-  const [auth, setAuth] = useAuth();
-  const { cart, setCart } = useCart();
+import { useAuth } from "../context/auth"; // Using your AuthContext
+import { Button } from "bootstrap/dist/js/bootstrap.bundle.min";
 
-  const [paymentOption, setPaymentOption] = useState("delivery");
-  const navigate = useNavigate();
+const CartPage = () => {
+  const { cart, removeFromCart, increaseQuantity, decreaseQuantity } =
+    useCart();
+  const [auth] = useAuth(); // Use AuthContext to access user data
+
+  const [paymentMethod, setPaymentMethod] = useState("payment_on_delivery");
+  const [address, setAddress] = useState(auth.user?.address || ""); // Default to user's address if signed in
 
   const totalPrice = () => {
-    try {
-      let total = 0;
-      cart?.map((item) => {
-        total = total + item.price;
-      });
-      return total.toLocaleString("en-US", {
+    return cart
+      .reduce((total, item) => total + item.price * item.quantity, 0)
+      .toLocaleString("en-US", {
         style: "currency",
         currency: "NGN",
       });
-    } catch (error) {
-      console.log(error);
-    }
   };
 
-  const removeCartItem = (pid) => {
-    try {
-      let myCart = [...cart];
-      let index = myCart.findIndex((item) => item._id === pid);
-      myCart.splice(index, 1);
-      setCart(myCart);
-      localStorage.setItem("cart", JSON.stringify(myCart));
-    } catch (error) {
-      console.log(error);
-    }
+  const handleIncreaseQuantity = (id) => {
+    console.log("Increase button clicked for product ID:", id);
+    increaseQuantity(id);
   };
 
-  const handleCheckout = () => {
-    console.log(`Checkout with ${paymentOption} payment option`);
-    navigate("/orders");
+  const handleDecreaseQuantity = (id) => {
+    console.log("Decrease button clicked for product ID:", id);
+    decreaseQuantity(id);
   };
+
+  const handleRemoveFromCart = (id) => {
+    console.log("Remove button clicked for product ID:", id);
+    removeFromCart(id);
+  };
+
+  const handleAddressChange = (e) => {
+    setAddress(e.target.value);
+  };
+
   return (
-    <LayoutTheme title={"cart page"}>
+    <LayoutTheme title={"Cart Page"}>
       <div className='container'>
         <div className='row'>
           <div className='col-md-12'>
-            <h1 className='text-center bg-light p-2 mb-1'>
-              {`Hello ${auth?.token && auth?.user?.name}`}
-            </h1>
+            <h1 className='text-center bg-light p-2 mb-1'> Shopping Cart </h1>
             <h4 className='text-center'>
-              {cart?.length
-                ? `You Have ${cart.length} items in your cart ${
-                    auth?.token ? "" : "please login to checkout"
-                  }`
-                : " Your Cart Is Empty"}
+              {cart.length
+                ? `You have ${cart.length} items in your cart.`
+                : "Your Cart is Empty"}
             </h4>
           </div>
         </div>
+
         <div className='row'>
           <div className='col-md-8'>
-            {cart?.map((p) => (
-              <div className='row mb-2 p-3 card flex-row'>
+            {cart.map((p) => (
+              <div className='row mb-2 p-3 card flex-row' key={p._id}>
                 <div className='col-md-4'>
                   <img
                     src={`${
@@ -76,77 +71,71 @@ const CartPage = () => {
                 </div>
                 <div className='col-md-8'>
                   <p>{p.name}</p>
-                  <p>{p.description.substring(0, 30)}</p>
-                  <p>Price : {p.price}</p>
-                  <button
-                    className='btn btn-danger'
-                    onClick={() => removeCartItem(p._id)}>
-                    Remove
-                  </button>
+                  <p>Price: ₦{p.price}</p>
+                  <p>Quantity: {p.quantity}</p>
+                  <div>
+                    <button
+                      className='btn btn-sm btn-primary'
+                      onClick={() => handleIncreaseQuantity(p._id)}>
+                      +
+                    </button>
+                    <button
+                      className='btn btn-sm btn-danger'
+                      onClick={() => handleDecreaseQuantity(p._id)}>
+                      -
+                    </button>
+                    <button
+                      className='btn btn-danger'
+                      onClick={() => handleRemoveFromCart(p._id)}>
+                      Remove from cart
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
+
           <div className='col-md-4 text-center'>
             <h2>Cart Summary</h2>
-            <p>Total | Checkout | Payment</p>
             <hr />
-            <h4>Total : {totalPrice()} </h4>
-            {auth?.user?.address ? (
-              <>
-                <div className='mb-3'>
-                  <h4>Current Address</h4>
-                  <h5>{auth?.user?.address}</h5>
-                  <button
-                    className='btn btn-outline-warning'
-                    onClick={() => navigate("/dashboard/user/profile")}>
-                    Update Address
-                  </button>
-                </div>
-              </>
-            ) : (
-              <div className='mb-3'>
-                {auth?.token ? (
-                  <button
-                    className='btn btn-outline-warning'
-                    onClick={() => navigate("/dashboard/user/profile")}>
-                    Update Address
-                  </button>
-                ) : (
-                  <button
-                    className='btn btn-outline-warning'
-                    onClick={() =>
-                      navigate("/login", {
-                        state: "/cart",
-                      })
-                    }>
-                    Please Login to checkout
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
-          <div className='mt-3'>
-            <h4>Payment Option</h4>
-            <select
-              className='form-select'
-              value={paymentOption}
-              onChange={(e) => setPaymentOption(e.target.value)}>
-              <option value='delivery'>Payment on Delivery</option>
-              <option value='online'>Online Payment</option>
-            </select>
-          </div>
+            <h4>Total: {totalPrice()}</h4>
 
-          <div className='mt-4'>
-            {auth?.token && cart?.length > 0 ? (
-              <button className='btn btn-success' onClick={handleCheckout}>
-                Complete Checkout
-              </button>
-            ) : (
-              <button className='btn btn-danger' disabled>
-                Complete Checkout (Login Required)
-              </button>
-            )}
+            {/* Payment Method Section */}
+            <div className='mt-4'>
+              <label htmlFor='paymentMethod' className='form-label'>
+                Select Payment Method
+              </label>
+              <select
+                id='paymentMethod'
+                className='form-select'
+                value={paymentMethod}
+                onChange={(e) => setPaymentMethod(e.target.value)}>
+                <option value='payment_on_delivery'>Payment on Delivery</option>
+                {/* Add other payment methods here if needed */}
+                {/* <option value="online_payment">Online Payment</option> */}
+              </select>
+            </div>
+
+            {/* Address Section */}
+            <div className='mt-4'>
+              <label htmlFor='address' className='form-label'>
+                Shipping Address
+              </label>
+              {auth.user ? (
+                <h4>{auth.user?.address}</h4>
+              ) : (
+                <textarea
+                  id='address'
+                  className='form-control'
+                  placeholder='Enter your address'
+                  value={address}
+                  onChange={handleAddressChange}
+                />
+              )}
+            </div>
+            <div>
+              <h3>Place Order</h3>
+            </div>
           </div>
         </div>
       </div>

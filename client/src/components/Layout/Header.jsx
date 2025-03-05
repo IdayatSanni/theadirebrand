@@ -6,6 +6,7 @@ import SearchInput from "../Form/SearchInput";
 import useCategory from "../../hooks/useCategory";
 import { useCart } from "../../context/cart";
 import { Badge } from "antd";
+import { HiOutlineBars3 } from "react-icons/hi2";
 import {
   Container,
   Nav,
@@ -16,7 +17,7 @@ import {
 
 const Header = () => {
   const [auth, setAuth] = useAuth();
-  const { cart } = useCart(); 
+  const { cart } = useCart();
 
   const categories = useCategory();
 
@@ -83,7 +84,9 @@ const Header = () => {
           <Navbar.Brand as={Link} to='/'>
             TheAdireBrand
           </Navbar.Brand>
-          <Navbar.Toggle aria-controls='offcanvasNavbar' />
+          <Navbar.Toggle aria-controls='offcanvasNavbar'>
+            <HiOutlineBars3 />
+          </Navbar.Toggle>
           <Navbar.Offcanvas
             id='offcanvasNavbar'
             aria-labelledby='offcanvasNavbarLabel'

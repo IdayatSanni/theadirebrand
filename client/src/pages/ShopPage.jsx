@@ -1,14 +1,14 @@
 import LayoutTheme from "../components/Layout/LayoutTheme";
 import { useAuth } from "../context/auth";
 import React, { useState, useEffect } from "react";
-import { useCart } from "../context/cart.jsx";
+import { useCart } from "../context/cart";
 import axios from "axios";
 import { Checkbox, Radio } from "antd";
 import { Prices } from "../components/Prices";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import CartDropdown from "../components/CartDropdown";
-import ProductCard from "../components/ProductCard"; // Import ProductCard component
+import ProductCard from "../components/ProductCard";
 
 const ShopPage = () => {
   const navigate = useNavigate();
@@ -124,17 +124,6 @@ const ShopPage = () => {
     }
   };
 
-  const handleAddToCart = (product) => {
-    setCart([...cart, { ...product, quantity: 1 }]);
-    localStorage.setItem(
-      "cart",
-      JSON.stringify([...cart, { ...product, quantity: 1 }])
-    );
-    console.log("Item Added to Cart", product);
-    toast.success("Item Added to cart");
-    toggleCartVisibility();
-  };
-
   const toggleCartVisibility = () => {
     setIsCartOpen(!isCartOpen);
   };
@@ -143,34 +132,88 @@ const ShopPage = () => {
     <LayoutTheme title={"Home"}>
       <div className='container-fluid row mt-3'>
         <div className='col-md-2'>
-          <h4 className='text-center'>Filter By Category</h4>
-          <div className='d-flex flex-column'>
-            {categories?.map((c) => (
-              <Checkbox
-                key={c._id}
-                onChange={(e) => handleFilter(e.target.checked, c._id)}>
-                {c.name}
-              </Checkbox>
-            ))}
-          </div>
-
-          <h4 className='text-center mt-4'>Filter By Price</h4>
-          <div className='d-flex flex-column'>
-            <Radio.Group onChange={(e) => setRadio(e.target.value)}>
-              {Prices?.map((p) => (
-                <div key={p._id}>
-                  <Radio value={p.array}>{p.name}</Radio>
-                </div>
+          <div className='d-md-block d-none'>
+            <h4 className='text-center'>Filter By Category</h4>
+            <div className='d-flex flex-column'>
+              {categories?.map((c) => (
+                <Checkbox
+                  key={c._id}
+                  onChange={(e) => handleFilter(e.target.checked, c._id)}>
+                  {c.name}
+                </Checkbox>
               ))}
-            </Radio.Group>
+            </div>
           </div>
 
-          <div className='d-flex flex-column mt-4'>
+          <div className='d-md-block d-none'>
+            <h4 className='text-center mt-4'>Filter By Price</h4>
+            <div className='d-flex flex-column'>
+              <Radio.Group onChange={(e) => setRadio(e.target.value)}>
+                {Prices?.map((p) => (
+                  <div key={p._id}>
+                    <Radio value={p.array}>{p.name}</Radio>
+                  </div>
+                ))}
+              </Radio.Group>
+            </div>
+          </div>
+
+          <div className='d-md-block d-none'>
+            <div className='d-flex flex-column mt-4'>
+              <button
+                className='btn btn-danger'
+                onClick={() => window.location.reload()}>
+                RESET FILTERS
+              </button>
+            </div>
+          </div>
+
+          <div className='d-block d-md-none p-2'>
             <button
-              className='btn btn-danger'
-              onClick={() => window.location.reload()}>
-              RESET FILTERS
+              className='btn w-100 search-button'
+              data-bs-toggle='collapse'
+              data-bs-target='#filter-collapse'
+              aria-expanded='false'
+              aria-controls='filter-collapse'>
+              Filter Options
             </button>
+            <div className='collapse' id='filter-collapse'>
+              <div className='p-3'>
+                <h4 className='text-center'>Filter By Category</h4>
+                <div className='d-flex flex-column'>
+                  {categories?.map((c) => (
+                    <Checkbox
+                      key={c._id}
+                      onChange={(e) => handleFilter(e.target.checked, c._id)}>
+                      {c.name}
+                    </Checkbox>
+                  ))}
+                </div>
+              </div>
+
+              <div className='p-1'>
+                <h4 className='text-center mt-4'>Filter By Price</h4>
+                <div className='d-flex flex-column'>
+                  <Radio.Group onChange={(e) => setRadio(e.target.value)}>
+                    {Prices?.map((p) => (
+                      <div key={p._id}>
+                        <Radio value={p.array}>{p.name}</Radio>
+                      </div>
+                    ))}
+                  </Radio.Group>
+                </div>
+              </div>
+
+              <div className='p-1'>
+                <div className='d-flex flex-column mt-4'>
+                  <button
+                    className='btn btn-danger w-100'
+                    onClick={() => window.location.reload()}>
+                    RESET FILTERS
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -179,10 +222,11 @@ const ShopPage = () => {
           {products.length === 0 && (
             <p className='text-center'>No products found</p>
           )}
-          <div className='d-flex flex-wrap'>
+          <div className='d-flex justify-content-center flex-wrap'>
             {products?.map((p) => (
               <div className='card m-2' style={{ width: "18rem" }} key={p._id}>
                 <ProductCard
+                  _id={p._id}
                   imageSrc={`${
                     import.meta.env.VITE_API
                   }/api/v1/product/product-photo/${p._id}`}
@@ -214,10 +258,12 @@ const ShopPage = () => {
         </div>
       </div>
 
-      <CartDropdown
-        isCartOpen={isCartOpen}
-        toggleCartVisibility={toggleCartVisibility}
-      />
+      {isCartOpen && (
+        <CartDropdown
+          isCartOpen={isCartOpen}
+          toggleCartVisibility={toggleCartVisibility}
+        />
+      )}
     </LayoutTheme>
   );
 };
