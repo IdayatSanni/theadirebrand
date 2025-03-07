@@ -93,9 +93,9 @@ const CreateCategory = () => {
 
   return (
     <LayoutTheme title={"Dashboard - Create Category"}>
-      <div className='container-fluid m-3 p-3'>
+      <div className='container'>
         <div className='row'>
-          <div className='col-md-3'>
+          <div className='col-md-3 mb-4'>
             <AdminMenu />
           </div>
           <div className='col-md-9'>
@@ -117,7 +117,7 @@ const CreateCategory = () => {
                 </thead>
                 <tbody>
                   {categories?.map((c) => (
-                    <tr key={c._id}> 
+                    <tr key={c._id}>
                       <td>{c.name}</td>
                       <td>
                         <button

@@ -9,7 +9,7 @@ const ProductList = ({ limit = 12, filters }) => {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(limit);
-  
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -26,7 +26,6 @@ const ProductList = ({ limit = 12, filters }) => {
             },
           }
         );
-        
 
         setProducts(data.products);
         setTotalProducts(data.countTotal);
@@ -53,11 +52,11 @@ const ProductList = ({ limit = 12, filters }) => {
     totalProducts && perPage ? Math.ceil(totalProducts / perPage) : 0;
 
   return (
-    <div className='container my-5'>
+    <div className='container my-3'>
       <div className='row mb-4'>
         <div className='col-12'>
           <div className='d-flex justify-content-between align-items-center'>
-            <h2 className='h2'>Products</h2>
+            <h2 className='h2 text-center'>Products</h2>
             <select onChange={handlePerPageChange} value={perPage}>
               <option value={12}>12 per page</option>
               <option value={24}>24 per page</option>
@@ -76,7 +75,7 @@ const ProductList = ({ limit = 12, filters }) => {
           products.map((product) => (
             <div
               key={product._id}
-              className='col-12 col-sm-6 col-md-4 col-lg-3 mb-4 d-flex justify-content-center'>
+              className='col-12 col-sm-6 col-md-3 col-lg-4 mb-4 d-flex justify-content-center'>
               <ProductCard
                 _id={product._id}
                 imageSrc={`${
@@ -92,7 +91,7 @@ const ProductList = ({ limit = 12, filters }) => {
                 productSlug={product.slug}
                 showCategory={false}
                 showPrice={true}
-                showAddToView={false}
+                showAddToView={true}
                 showAddToCartButton={true}
               />
             </div>

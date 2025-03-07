@@ -3,7 +3,7 @@ import LayoutTheme from "../components/Layout/LayoutTheme";
 import { Row, Col } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import ProductCard from "../components/ProductCard"; // Import the ProductCard component
+import ProductCard from "../components/ProductCard"; 
 
 const CategoryProduct = () => {
   const params = useParams();

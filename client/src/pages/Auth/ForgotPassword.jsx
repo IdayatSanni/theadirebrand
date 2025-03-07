@@ -38,7 +38,7 @@ const ForgotPasssword = () => {
   };
   return (
     <LayoutTheme title={"forgot-password"}>
-      <div className='form-container '>
+      <div className='container p-5 form-container'>
         <form onSubmit={handleSubmit}>
           <h4 className='title'>RESET PASSWORD</h4>
 

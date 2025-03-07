@@ -105,9 +105,9 @@ const CreateLength = () => {
 
   return (
     <LayoutTheme title='Dashboard - Create Length'>
-      <div className='container-fluid m-3 p-3'>
+      <div className='container'>
         <div className='row'>
-          <div className='col-md-3'>
+          <div className='col-md-3 mb-4'>
             <AdminMenu />
           </div>
           <div className='col-md-9'>

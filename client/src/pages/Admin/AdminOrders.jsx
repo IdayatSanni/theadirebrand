@@ -19,7 +19,6 @@ const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
   const [auth, setAuth] = useAuth();
 
-  
   const getOrders = async () => {
     try {
       const { data } = await axios.get(
@@ -42,7 +41,6 @@ const AdminOrders = () => {
     if (auth?.token) getOrders();
   }, [auth?.token]);
 
-
   const handleChange = async (orderId, value) => {
     try {
       const { data } = await axios.put(
@@ -56,7 +54,7 @@ const AdminOrders = () => {
           },
         }
       );
-      getOrders(); 
+      getOrders();
       toast.success("Order status updated successfully");
     } catch (error) {
       console.log(error);
@@ -66,8 +64,8 @@ const AdminOrders = () => {
 
   return (
     <LayoutTheme>
-      <div className='row dashboard'>
-        <div className='col-md-3'>
+      <div className='row dashboard container'>
+        <div className='col-md-3 mb-4'>
           <AdminMenu />
         </div>
         <div className='col-md-9'>
@@ -91,7 +89,7 @@ const AdminOrders = () => {
                       <td>{i + 1}</td>
                       <td>
                         <Select
-                          variant='outlined' 
+                          variant='outlined'
                           onChange={(value) => handleChange(o._id, value)}
                           defaultValue={o?.status}>
                           {status.map((s, i) => (
@@ -101,18 +99,13 @@ const AdminOrders = () => {
                           ))}
                         </Select>
                       </td>
-                      <td>
-                        {o?.buyer?.name || o?.guestName}{" "}
-                       
-                      </td>
+                      <td>{o?.buyer?.name || o?.guestName} </td>
                       <td>{moment(o?.createdAt).fromNow()}</td>{" "}
-                      
                       <td>
                         {o?.payment === "payment_on_delivery"
                           ? "Pending"
                           : "Paid"}
                       </td>{" "}
-                    
                       <td>{o?.products?.length}</td>
                     </tr>
                   </tbody>
@@ -126,7 +119,6 @@ const AdminOrders = () => {
                         <p>{p.productId.name}</p>
                         <p>Price: {p.productId.price}</p>
                         <p>Quantity: {p.quantity}</p>{" "}
-                       
                       </div>
                     </div>
                   ))}

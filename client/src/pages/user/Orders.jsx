@@ -34,9 +34,9 @@ const Orders = () => {
 
   return (
     <LayoutTheme title={"Your Orders"}>
-      <div className='container-flui p-3 m-3 dashboard'>
+      <div className='container dashboard'>
         <div className='row'>
-          <div className='col-md-3'>
+          <div className='col-md-3 mb-4'>
             <UserMenu />
           </div>
           <div className='col-md-9'>

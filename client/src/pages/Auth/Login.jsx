@@ -12,7 +12,6 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -42,7 +41,7 @@ const Login = () => {
   };
   return (
     <LayoutTheme title={"login-Ecommerce"}>
-      <div className='form-container '>
+      <div className='container p-5 form-container'>
         <form onSubmit={handleSubmit}>
           <h4 className='title'>LOGIN FORM</h4>
 
@@ -68,7 +67,12 @@ const Login = () => {
               required
             />
           </div>
-          <div className='mb-3'>
+
+          <button type='submit' className='btn btn-primary mb-3'>
+            LOGIN
+          </button>
+
+          <div>
             <button
               type='button'
               className='btn btn-primary'
@@ -78,10 +82,6 @@ const Login = () => {
               Forgot Password
             </button>
           </div>
-
-          <button type='submit' className='btn btn-primary'>
-            LOGIN
-          </button>
         </form>
       </div>
     </LayoutTheme>

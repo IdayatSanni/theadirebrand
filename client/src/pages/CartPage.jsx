@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import LayoutTheme from "../components/Layout/LayoutTheme";
 import { useCart } from "../context/cart";
 import { useAuth } from "../context/auth";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
-
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const CartPage = () => {
@@ -65,9 +64,6 @@ const CartPage = () => {
     setGuestAddress(e.target.value);
   };
 
-  console.log("Auth User:", auth.user);
-  console.log("Auth Token:", auth.token);
-
   const handlePlaceOrder = async () => {
     setLoading(true);
 
@@ -90,7 +86,6 @@ const CartPage = () => {
         headers: {},
       };
 
-      // Only add Authorization header if the user is authenticated
       if (auth.token) {
         config.headers.Authorization = `Bearer ${auth.token}`;
       }
@@ -98,15 +93,11 @@ const CartPage = () => {
       const response = await axios.post(
         `${import.meta.env.VITE_API}/api/v1/auth/create-order`,
         orderData,
-        config // Pass the config with the token header
+        config
       );
 
-      console.log("Order data being sent:", orderData); // Logging order data
-
       if (response.data.success) {
-        console.log("Order placed successfully", response.data.order);
         clearCart();
-
         navigate(`/order/${response.data.order._id}`, {
           state: { order: response.data.order },
         });
@@ -123,9 +114,9 @@ const CartPage = () => {
   return (
     <LayoutTheme title={"Cart Page"}>
       <div className='container'>
-        <div className='row'>
-          <div className='col-md-12'>
-            <h1 className='text-center bg-light p-2 mb-1'> Shopping Cart </h1>
+        <div className='row m-2'>
+          <div className='col-12'>
+            <h1 className='text-center p-2 m-2'>Shopping Cart</h1>
             <h4 className='text-center'>
               {cart.length
                 ? `You have ${cart.length} items in your cart.`
@@ -135,39 +126,50 @@ const CartPage = () => {
         </div>
 
         <div className='row'>
-          <div className='col-md-8'>
+          <div className='col-12 col-md-8 p-4'>
             {cart.map((p) => (
               <div className='row mb-2 p-3 card flex-row' key={p._id}>
-                <div className='col-md-4'>
+                <div className='col-4 col-md-3'>
                   <img
                     src={`${
                       import.meta.env.VITE_API
                     }/api/v1/product/product-photo/${p._id}`}
                     className='card-img-top'
                     alt={p.name}
-                    width='100px'
-                    height={"100px"}
+                    style={{
+                      width: "100%",
+                      height: "100px",
+                      objectFit: "cover",
+                    }}
                   />
                 </div>
-                <div className='col-md-8'>
-                  <p>{p.name}</p>
-                  <p>Price: ₦{p.price}</p>
-                  <p>Quantity: {p.quantity}</p>
-                  <div>
+                <div className='col-8 col-md-9 d-flex flex-column justify-content-between'>
+                  <div className='d-flex flex-column flex-md-row justify-content-between align-items-start'>
+                    <div className='mb-2 mb-md-0'>
+                      <p>{p.name}</p>
+                      <p>₦{p.price}</p>
+                    </div>
+                    <div>
+                      <p>Quantity: {p.quantity}</p>
+                    </div>
+                  </div>
+                  <div className='d-flex justify-content-between align-items-center'>
+                    <div>
+                      <button
+                        className='btn btn-sm btn-black'
+                        onClick={() => handleDecreaseQuantity(p._id)}>
+                        -
+                      </button>
+                      <button
+                        className='btn btn-sm btn-black mx-2'
+                        onClick={() => handleIncreaseQuantity(p._id)}>
+                        +
+                      </button>
+                    </div>
                     <button
-                      className='btn btn-sm btn-primary'
-                      onClick={() => handleIncreaseQuantity(p._id)}>
-                      +
-                    </button>
-                    <button
-                      className='btn btn-sm btn-danger'
-                      onClick={() => handleDecreaseQuantity(p._id)}>
-                      -
-                    </button>
-                    <button
-                      className='btn btn-danger'
+                      className='btn btn-danger btn-sm'
                       onClick={() => handleRemoveFromCart(p._id)}>
-                      Remove from cart
+                      Delete
                     </button>
                   </div>
                 </div>
@@ -175,7 +177,7 @@ const CartPage = () => {
             ))}
           </div>
 
-          <div className='col-md-4 text-center'>
+          <div className='col-12 col-md-4 text-center mb-4'>
             <h2>Cart Summary</h2>
             <hr />
             <h4>Total: {totalPrice()}</h4>
@@ -219,8 +221,8 @@ const CartPage = () => {
                   id='email'
                   className='form-control'
                   placeholder='Enter your email'
-                  value={guestEmail} 
-                  onChange={handleGuestEmailChange} 
+                  value={guestEmail}
+                  onChange={handleGuestEmailChange}
                 />
               )}
             </div>
@@ -235,15 +237,15 @@ const CartPage = () => {
                   id='address'
                   className='form-control'
                   placeholder='Enter your address'
-                  value={guestAddress} 
-                  onChange={handleGuestAddressChange} 
+                  value={guestAddress}
+                  onChange={handleGuestAddressChange}
                 />
               )}
             </div>
 
             <div>
               <button
-                className='btn btn-primary'
+                className='btn btn-success'
                 onClick={handlePlaceOrder}
                 disabled={loading}>
                 {loading ? "Placing Order..." : "Place Order"}

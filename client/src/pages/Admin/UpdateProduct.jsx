@@ -137,9 +137,9 @@ const UpdateProduct = () => {
 
   return (
     <LayoutTheme title={"Dashboard - Update Product"}>
-      <div className='container-fluid m-3 p-3'>
+      <div className='container'>
         <div className='row'>
-          <div className='col-md-3'>
+          <div className='col-md-3 mb-4'>
             <AdminMenu />
           </div>
           <div className='col-md-9'>
@@ -160,7 +160,6 @@ const UpdateProduct = () => {
                 ))}
               </Select>
 
-              
               <div className='mb-3'>
                 <Select
                   placeholder='Select Yard'
@@ -177,7 +176,6 @@ const UpdateProduct = () => {
                 </Select>
               </div>
 
-              
               <div className='mb-3'>
                 <Select
                   placeholder='Select Length'

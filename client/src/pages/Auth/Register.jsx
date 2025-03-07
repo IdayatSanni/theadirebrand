@@ -42,7 +42,7 @@ const Register = () => {
 
   return (
     <LayoutTheme title={"Register"}>
-      <div className='form-container '>
+      <div className='container p-5 form-container'>
         <form onSubmit={handleSubmit}>
           <h4 className='title'>REGISTER FORM</h4>
           <div className='mb-3'>

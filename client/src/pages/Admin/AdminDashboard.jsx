@@ -7,9 +7,9 @@ const AdminDashboard = () => {
   const [auth] = useAuth();
   return (
     <LayoutTheme>
-      <div className='container-fluid m-3 p-3'>
+      <div className='p-3 container'>
         <div className='row'>
-          <div className='col-md-3'>
+          <div className='col-md-3 mb-5'>
             <AdminMenu />
           </div>
           <div className='col-md-9'>

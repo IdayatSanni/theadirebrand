@@ -51,13 +51,13 @@ const Profile = () => {
   };
   return (
     <LayoutTheme title={"Your Profile"}>
-      <div className='container-fluid m-3 p-3'>
+      <div className='container'>
         <div className='row'>
           <div className='col-md-3'>
             <UserMenu />
           </div>
           <div className='col-md-9'>
-            <div className='form-container '>
+            <div className='container p-5'>
               <form onSubmit={handleSubmit}>
                 <h4 className='title'>USER PROFILE</h4>
                 <div className='mb-3'>
