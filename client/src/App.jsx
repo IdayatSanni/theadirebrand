@@ -2,7 +2,6 @@ import { Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
-import Policy from "./pages/Policy";
 import PageNotFound from "./pages/PageNotFound";
 import Register from "./pages/Auth/Register";
 import Login from "./pages/Auth/Login";
@@ -32,6 +31,7 @@ import ShopPage from "./pages/ShopPage";
 import CreateYard from "./pages/Admin/CreateYard";
 import CreateLength from "./pages/Admin/CreateLength";
 import OrderPage from "./pages/OrderPage";
+import ShippingPage from "./pages/ShippingPage";
 
 function App() {
   return (
@@ -63,9 +63,9 @@ function App() {
       <Route path='/register' element={<Register />} />
       <Route path='/forgot-password' element={<ForgotPasssword />} />
       <Route path='/login' element={<Login />} />
+      <Route path='/shipping' element={<ShippingPage />} />
       <Route path='/about' element={<About />} />
       <Route path='/contact' element={<Contact />} />
-      <Route path='/policy' element={<Policy />} />
       <Route path='*' element={<PageNotFound />} />
     </Routes>
   );

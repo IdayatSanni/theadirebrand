@@ -40,15 +40,18 @@ const Footer = () => {
               <h5>QUICK LINKS</h5>
               <ul className='list-unstyled'>
                 <li>
-                  <Link
-                    to='/shipping-returns'
-                    className='text-light nav-link-custom'>
+                  <Link to='/shipping' className='text-light nav-link-custom'>
                     Shipping & Returns
                   </Link>
                 </li>
                 <li>
-                  <Link to='/support' className='text-light nav-link-custom'>
+                  <Link to='/contact' className='text-light nav-link-custom'>
                     Support
+                  </Link>
+                </li>
+                <li>
+                  <Link to='/about' className='text-light nav-link-custom'>
+                    About
                   </Link>
                 </li>
               </ul>

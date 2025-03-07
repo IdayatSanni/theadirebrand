@@ -101,6 +101,9 @@ const Header = () => {
                 <Nav.Link as={Link} to='/'>
                   Home
                 </Nav.Link>
+                <Nav.Link as={Link} to='/about'>
+                  About us
+                </Nav.Link>
                 <Nav.Link as={Link} to={`/category/adire`}>
                   Adire
                 </Nav.Link>
