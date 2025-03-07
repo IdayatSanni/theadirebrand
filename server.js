@@ -5,17 +5,15 @@ import connectDb from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
-import lengthRoutes from "./routes/lengthRoutes.js"
-import yardRoutes from "./routes/yardRoutes.js"
+import lengthRoutes from "./routes/lengthRoutes.js";
+import yardRoutes from "./routes/yardRoutes.js";
 import cors from "cors";
 
-//configure env
 dotenv.config();
 
 //databse config
 connectDb();
 
-//rest object
 const app = express();
 
 //middelwares
@@ -29,6 +27,7 @@ app.use("/api/v1/category", categoryRoutes);
 app.use("/api/v1/product", productRoutes);
 app.use("/api/v1/length", lengthRoutes);
 app.use("/api/v1/yard", yardRoutes);
+
 app.get("/", (req, res) => {
   res.send("<h1>Welcome to ecommerce app</h1>");
 });

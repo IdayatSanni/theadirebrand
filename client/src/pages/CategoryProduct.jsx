@@ -56,7 +56,7 @@ const CategoryProduct = () => {
                     className='card m-2'
                     style={{ width: "18rem" }}
                     key={p._id}>
-                    {/* Wrap the card in a Link to make the entire card clickable */}
+                    
                     <Link
                       to={`/product/${p.slug}`}
                       style={{ textDecoration: "none" }}>

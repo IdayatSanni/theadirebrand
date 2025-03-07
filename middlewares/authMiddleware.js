@@ -1,38 +1,55 @@
-import JWT from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import userModel from "../models/userModel.js";
 
-//Protected Routes token base
 export const requireSignIn = async (req, res, next) => {
-  try {
-    const decode = JWT.verify(
-      req.headers.authorization,
-      process.env.JWT_SECRET
-    );
-    req.user = decode;
+  let token;
+
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    try {
+      token = req.headers.authorization.split(" ")[1];
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+      const user = await userModel.findById(decoded._id).select("-password");
+      if (!user) {
+        return res.status(401).json({
+          success: false,
+          message: "User not found",
+        });
+      }
+      req.user = user;
+      next();
+    } catch (error) {
+      console.error(error);
+      return res.status(401).json({
+        success: false,
+        message: "Not authorized, token failed",
+      });
+    }
+  } else {
+    req.user = null;
     next();
-  } catch (error) {
-    console.log(error);
   }
 };
 
-//admin acceess
 export const isAdmin = async (req, res, next) => {
   try {
-    const user = await userModel.findById(req.user._id);
-    if (user.role !== 1) {
-      return res.status(401).send({
+    
+    if (req.user.role !== 1) {
+      return res.status(403).send({
         success: false,
-        message: "UnAuthorized Access",
+        message: "Unauthorized access",
       });
-    } else {
-      next();
     }
+    next(); 
   } catch (error) {
     console.log(error);
-    res.status(401).send({
+    res.status(403).send({
       success: false,
+      message: "Unauthorized access",
       error,
-      message: "Error in admin middelware",
     });
   }
 };

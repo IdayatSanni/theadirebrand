@@ -12,7 +12,7 @@ export const createProductController = async (req, res) => {
       name,
       description,
       price,
-      category,
+      category, // Comma-separated string of ObjectIds
       quantity,
       shipping,
       bestseller,
@@ -21,6 +21,16 @@ export const createProductController = async (req, res) => {
     } = req.fields;
     const { photo } = req.files;
 
+    // Validate categories if they are provided as a string (comma-separated)
+    let categoryIds = [];
+    if (category) {
+      // Split string by commas and convert each ID to ObjectId
+      categoryIds = category
+        .split(",")
+        .map((id) => new mongoose.Types.ObjectId(id.trim()));
+    }
+
+    // Validate the rest of the fields
     switch (true) {
       case !name:
         return res.status(500).send({ error: "Name is Required" });
@@ -28,7 +38,7 @@ export const createProductController = async (req, res) => {
         return res.status(500).send({ error: "Description is Required" });
       case !price:
         return res.status(500).send({ error: "Price is Required" });
-      case !category || category.length === 0:
+      case !categoryIds || categoryIds.length === 0:
         return res
           .status(500)
           .send({ error: "At least one Category is Required" });
@@ -40,6 +50,7 @@ export const createProductController = async (req, res) => {
           .send({ error: "Photo is required and should be less than 1MB" });
     }
 
+    // Check for valid yard and length as you did previously
     let yardData = null;
     if (yard) {
       yardData = await yardModel.findById(yard);
@@ -56,14 +67,17 @@ export const createProductController = async (req, res) => {
       }
     }
 
+    // Create product with proper category assignment
     const product = new productModel({
       ...req.fields,
       slug: slugify(name),
       bestseller: bestseller || false,
+      category: categoryIds, // Set the category as an array of ObjectIds
       yard: yardData ? yardData._id : null,
       length: lengthData ? lengthData._id : null,
     });
 
+    // Save photo if exists
     if (photo) {
       product.photo.data = fs.readFileSync(photo.path);
       product.photo.contentType = photo.type;
@@ -298,24 +312,51 @@ export const productCountController = async (req, res) => {
 
 export const productListController = async (req, res) => {
   try {
-    const perPage = 2;
-    const page = req.params.page ? req.params.page : 1;
-    const products = await productModel
-      .find({})
-      .select("-photo")
-      .skip((page - 1) * perPage)
-      .limit(perPage)
-      .sort({ createdAt: -1 });
+    // Destructure the query parameters (checked, radio, page, limit)
+    const { checked = "", radio = [], page = 1, limit = 12 } = req.query;
+
+    // Initialize the arguments for the MongoDB query
+    let args = {};
+
+    // Handle category filter
+    if (checked && checked.length > 0) {
+      args.category = { $in: checked.split(",") }; // Convert string to an array of ObjectIds
+    }
+
+    // Handle price range filter
+    if (radio && radio.length === 2) {
+      const [minPrice, maxPrice] = radio;
+      if (!isNaN(minPrice) && !isNaN(maxPrice)) {
+        args.price = { $gte: parseInt(minPrice), $lte: parseInt(maxPrice) }; // Apply price range filter
+      }
+    }
+
+    // Debugging line: Check how the final query args look
+    console.log("Constructed Query Args:", args);
+
+    // Fetch the filtered products from the database
+    const filteredProducts = await productModel.find(args);
+
+    // Handle Pagination
+    const totalProducts = filteredProducts.length;
+    const paginatedProducts = filteredProducts.slice(
+      (page - 1) * limit,
+      page * limit
+    );
+
+    // Send the response
     res.status(200).send({
       success: true,
-      products,
+      products: paginatedProducts,
+      countTotal: totalProducts,
+      totalPages: Math.ceil(totalProducts / limit),
     });
   } catch (error) {
     console.log(error);
-    res.status(400).send({
+    res.status(500).send({
       success: false,
-      message: "Error in per page controller",
-      error,
+      message: "Error fetching products",
+      error: error.message,
     });
   }
 };

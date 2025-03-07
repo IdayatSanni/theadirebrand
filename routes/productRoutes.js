@@ -47,7 +47,7 @@ router.post("/product-filters", productFiltersController);
 
 router.get("/product-count", productCountController);
 
-router.get("/product-list/:page", productListController);
+router.get("/product-list", productListController);
 
 router.get("/search/:keyword", searchProductController);
 

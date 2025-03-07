@@ -4,19 +4,38 @@ const orderSchema = new mongoose.Schema(
   {
     products: [
       {
-        type: mongoose.ObjectId,
-        ref: "Products",
+        productId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Product",
+          required: true,
+        },
+        quantity: { type: Number, required: true },
+        slug: { type: String, required: true },
       },
     ],
+
     payment: {},
     buyer: {
-      type: mongoose.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "users",
+      required: false,
+    },
+    guestName: {
+      type: String,
+      required: false,
+    },
+    guestEmail: {
+      type: String,
+      required: false,
+    },
+    guestAddress: {
+      type: String,
+      required: false,
     },
     status: {
       type: String,
       default: "Not Process",
-      enum: ["Not Process", "Processing", "Shipped", "deliverd", "cancel"],
+      enum: ["Not Processed", "Processing", "Shipped", "Delivered", "Canceled"],
     },
   },
   { timestamps: true }

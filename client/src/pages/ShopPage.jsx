@@ -1,6 +1,5 @@
-import LayoutTheme from "../components/Layout/LayoutTheme";
-import { useAuth } from "../context/auth";
 import React, { useState, useEffect } from "react";
+import { useAuth } from "../context/auth";
 import { useCart } from "../context/cart";
 import axios from "axios";
 import { Checkbox, Radio } from "antd";
@@ -8,21 +7,21 @@ import { Prices } from "../components/Prices";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import CartDropdown from "../components/CartDropdown";
-import ProductCard from "../components/ProductCard";
+import ProductList from "../components/ProductList";
+import LayoutTheme from "../components/Layout/LayoutTheme";
 
 const ShopPage = () => {
   const navigate = useNavigate();
-  const [auth, setAuth] = useAuth();
   const { cart, setCart } = useCart();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [checked, setChecked] = useState([]);
   const [radio, setRadio] = useState([]);
   const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
+  // Fetch categories
   const getAllCategory = async () => {
     try {
       const { data } = await axios.get(
@@ -36,25 +35,7 @@ const ShopPage = () => {
     }
   };
 
-  useEffect(() => {
-    getAllCategory();
-    getTotal();
-  }, []);
-
-  const getAllProducts = async () => {
-    try {
-      setLoading(true);
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_API}/api/v1/product/product-list/${page}`
-      );
-      setLoading(false);
-      setProducts(data.products);
-    } catch (error) {
-      setLoading(false);
-      console.log(error);
-    }
-  };
-
+  // Fetch total number of products
   const getTotal = async () => {
     try {
       const { data } = await axios.get(
@@ -66,25 +47,7 @@ const ShopPage = () => {
     }
   };
 
-  useEffect(() => {
-    if (page === 1) return;
-    loadMore();
-  }, [page]);
-
-  const loadMore = async () => {
-    try {
-      setLoading(true);
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_API}/api/v1/product/product-list/${page}`
-      );
-      setLoading(false);
-      setProducts([...products, ...data?.products]);
-    } catch (error) {
-      console.log(error);
-      setLoading(false);
-    }
-  };
-
+  // Triggered when a category checkbox is clicked
   const handleFilter = (value, id) => {
     let all = [...checked];
     if (value) {
@@ -95,45 +58,31 @@ const ShopPage = () => {
     setChecked(all);
   };
 
-  useEffect(() => {
-    if (checked.length || radio.length) {
-      filterProduct();
-    } else {
-      getAllProducts();
-    }
-  }, [checked, radio]);
-
-  const filterProduct = async () => {
-    try {
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_API}/api/v1/product/product-filters`,
-        {
-          checked,
-          radio,
-        }
-      );
-
-      if (data?.products.length === 0) {
-        toast.info("No products found matching your filters");
-      }
-
-      setProducts(data?.products);
-    } catch (error) {
-      console.log("Error while filtering products:", error.response?.data);
-      toast.error("Error filtering products");
-    }
+  // Triggered when a price radio button is selected
+  const handlePriceFilter = (value) => {
+    console.log("Selected Price Range:", value);
+    setRadio(value);
   };
 
+  // Toggle visibility of the cart dropdown
   const toggleCartVisibility = () => {
     setIsCartOpen(!isCartOpen);
   };
 
+  useEffect(() => {
+    getAllCategory();
+    getTotal();
+  }, []);
+
   return (
-    <LayoutTheme title={"Home"}>
+    <LayoutTheme title={"Shop"}>
+      {/* Main container with layout */}
       <div className='container-fluid row mt-3'>
-        <div className='col-md-2'>
+        {/* Sidebar for filters */}
+        <div className='col-md-3 col-lg-2'>
+          {/* Category filter */}
           <div className='d-md-block d-none'>
-            <h4 className='text-center'>Filter By Category</h4>
+            <h4 className='text-center mb-4'>Filter By Category</h4>
             <div className='d-flex flex-column'>
               {categories?.map((c) => (
                 <Checkbox
@@ -145,10 +94,11 @@ const ShopPage = () => {
             </div>
           </div>
 
-          <div className='d-md-block d-none'>
-            <h4 className='text-center mt-4'>Filter By Price</h4>
+          {/* Price filter */}
+          <div className='d-md-block d-none mt-5'>
+            <h4 className='text-center mb-4'>Filter By Price</h4>
             <div className='d-flex flex-column'>
-              <Radio.Group onChange={(e) => setRadio(e.target.value)}>
+              <Radio.Group onChange={(e) => handlePriceFilter(e.target.value)}>
                 {Prices?.map((p) => (
                   <div key={p._id}>
                     <Radio value={p.array}>{p.name}</Radio>
@@ -157,107 +107,20 @@ const ShopPage = () => {
               </Radio.Group>
             </div>
           </div>
-
-          <div className='d-md-block d-none'>
-            <div className='d-flex flex-column mt-4'>
-              <button
-                className='btn btn-danger'
-                onClick={() => window.location.reload()}>
-                RESET FILTERS
-              </button>
-            </div>
-          </div>
-
-          <div className='d-block d-md-none p-2'>
-            <button
-              className='btn w-100 search-button'
-              data-bs-toggle='collapse'
-              data-bs-target='#filter-collapse'
-              aria-expanded='false'
-              aria-controls='filter-collapse'>
-              Filter Options
-            </button>
-            <div className='collapse' id='filter-collapse'>
-              <div className='p-3'>
-                <h4 className='text-center'>Filter By Category</h4>
-                <div className='d-flex flex-column'>
-                  {categories?.map((c) => (
-                    <Checkbox
-                      key={c._id}
-                      onChange={(e) => handleFilter(e.target.checked, c._id)}>
-                      {c.name}
-                    </Checkbox>
-                  ))}
-                </div>
-              </div>
-
-              <div className='p-1'>
-                <h4 className='text-center mt-4'>Filter By Price</h4>
-                <div className='d-flex flex-column'>
-                  <Radio.Group onChange={(e) => setRadio(e.target.value)}>
-                    {Prices?.map((p) => (
-                      <div key={p._id}>
-                        <Radio value={p.array}>{p.name}</Radio>
-                      </div>
-                    ))}
-                  </Radio.Group>
-                </div>
-              </div>
-
-              <div className='p-1'>
-                <div className='d-flex flex-column mt-4'>
-                  <button
-                    className='btn btn-danger w-100'
-                    onClick={() => window.location.reload()}>
-                    RESET FILTERS
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
 
-        <div className='col-md-9'>
-          <h1 className='text-center'>All Products</h1>
-          {products.length === 0 && (
-            <p className='text-center'>No products found</p>
-          )}
-          <div className='d-flex justify-content-center flex-wrap'>
-            {products?.map((p) => (
-              <div className='card m-2' style={{ width: "18rem" }} key={p._id}>
-                <ProductCard
-                  _id={p._id}
-                  imageSrc={`${
-                    import.meta.env.VITE_API
-                  }/api/v1/product/product-photo/${p._id}`}
-                  productName={p.name}
-                  productCategory={p.category.name}
-                  originalPrice={p.price}
-                  discountedPrice={p.discountedPrice}
-                  availableQuantity={p.quantity}
-                  productSlug={p.slug}
-                  showCategory={true}
-                  showPrice={true}
-                />
-              </div>
-            ))}
-          </div>
-
-          <div className='m-2 p-3'>
-            {products && products.length < total && (
-              <button
-                className='btn btn-warning'
-                onClick={(e) => {
-                  e.preventDefault();
-                  setPage(page + 1);
-                }}>
-                {loading ? "Loading ..." : "Loadmore"}
-              </button>
-            )}
-          </div>
+        {/* Product list */}
+        <div className='col-md-9 col-lg-10'>
+          <h1 className='text-center mb-5'>All Products</h1>
+          {/* Pass the selected filters to the ProductList component */}
+          <ProductList
+            limit={2}
+            filters={{ checked, radio }} // Filters passed here
+          />
         </div>
       </div>
 
+      {/* Cart dropdown toggle */}
       {isCartOpen && (
         <CartDropdown
           isCartOpen={isCartOpen}

@@ -31,19 +31,19 @@ const productSchema = new mongoose.Schema(
       default: false,
     },
     category: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: [mongoose.Schema.Types.ObjectId],
       ref: "Category",
       required: true,
     },
     yard: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Yard",
-      required: false, 
+      required: false,
     },
     length: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Length",
-      required: false, 
+      required: false,
     },
     photo: {
       data: Buffer,

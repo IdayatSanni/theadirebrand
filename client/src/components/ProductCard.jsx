@@ -2,6 +2,7 @@ import React from "react";
 import { MDBCard, MDBCardBody, MDBCardImage } from "mdb-react-ui-kit";
 import { useCart } from "../context/cart";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 const ProductCard = ({
   _id,
@@ -9,14 +10,13 @@ const ProductCard = ({
   productName,
   productCategory,
   originalPrice,
-  discountedPrice,
   productSlug,
   productQuantity,
   showCategory = true,
   showPrice = true,
+  showAddToCartButton = true,
+  showAddToView = true, 
 }) => {
-  console.log("_id in ProductCard:", _id);
-
   const { cart, addToCart, toggleCartVisibility } = useCart();
 
   const handleAddToCart = () => {
@@ -34,33 +34,33 @@ const ProductCard = ({
       _id,
       slug: productSlug,
       name: productName,
-      price: discountedPrice || originalPrice,
+      price: originalPrice,
       image: imageSrc,
       quantity: 1,
     };
 
     console.log("Product to add to cart:", product);
 
-    // Add the product to cart (or increment its quantity if it already exists)
     addToCart(product);
 
     toast.success(`${productName} added to cart`);
 
-    // Open the CartDropdown when item is added
     toggleCartVisibility();
   };
 
   return (
-    <MDBCard style={{ width: "300px" }}>
-      <MDBCardImage
-        src={imageSrc}
-        position='top'
-        className='img-fluid pt-3'
-        alt={productName}
-        style={{ width: "300px", height: "180px" }}
-      />
+    <MDBCard style={{ width: "350px" }}>
+      <Link to={`/product/${productSlug}`}>
+        <MDBCardImage
+          src={imageSrc}
+          position='top'
+          className='img-fluid pt-3'
+          alt={productName}
+          style={{ width: "350px", height: "180px" }}
+        />
+      </Link>
       <MDBCardBody>
-        {showCategory && (
+        {showCategory && productCategory && (
           <div className='d-flex justify-content-between'>
             <p className='small'>{productCategory}</p>
           </div>
@@ -68,17 +68,18 @@ const ProductCard = ({
         <div className='d-flex justify-content-between mb-3'>
           <h5 className='mb-0'>{productName}</h5>
           {showPrice && (
-            <h5 className='text-dark mb-0'>
-              {discountedPrice ? `₦${discountedPrice}` : `₦${originalPrice}`}
-            </h5>
+            <h5 className='text-dark mb-0'>{`₦${originalPrice}`}</h5>
           )}
         </div>
-        <button
-          className='btn btn-secondary ms-1 search-button'
-          onClick={handleAddToCart}
-          disabled={productQuantity <= 0}>
-          {productQuantity <= 0 ? "SOLD OUT" : "ADD TO CART"}
-        </button>
+        {showAddToCartButton && (
+          <button
+            className='btn btn-secondary ms-1 search-button'
+            onClick={handleAddToCart}
+            disabled={productQuantity <= 0}>
+            {productQuantity <= 0 ? "SOLD OUT" : "ADD TO CART"}
+          </button>
+        )}
+        {showAddToView && <Link to={`/product/${productSlug}`}>View</Link>}
       </MDBCardBody>
     </MDBCard>
   );

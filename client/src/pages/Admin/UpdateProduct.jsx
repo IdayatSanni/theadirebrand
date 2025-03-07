@@ -160,7 +160,7 @@ const UpdateProduct = () => {
                 ))}
               </Select>
 
-              {/* Yard Selection */}
+              
               <div className='mb-3'>
                 <Select
                   placeholder='Select Yard'
@@ -177,7 +177,7 @@ const UpdateProduct = () => {
                 </Select>
               </div>
 
-              {/* Length Selection */}
+              
               <div className='mb-3'>
                 <Select
                   placeholder='Select Length'

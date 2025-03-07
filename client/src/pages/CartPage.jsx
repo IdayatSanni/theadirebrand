@@ -1,16 +1,28 @@
 import React, { useState, useEffect } from "react";
 import LayoutTheme from "../components/Layout/LayoutTheme";
 import { useCart } from "../context/cart";
-import { useAuth } from "../context/auth"; // Using your AuthContext
-import { Button } from "bootstrap/dist/js/bootstrap.bundle.min";
+import { useAuth } from "../context/auth";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
+
+import axios from "axios";
 
 const CartPage = () => {
-  const { cart, removeFromCart, increaseQuantity, decreaseQuantity } =
-    useCart();
+  const {
+    cart,
+    removeFromCart,
+    increaseQuantity,
+    decreaseQuantity,
+    clearCart,
+  } = useCart();
   const [auth] = useAuth();
-
+  const navigate = useNavigate();
   const [paymentMethod, setPaymentMethod] = useState("payment_on_delivery");
   const [address, setAddress] = useState(auth.user?.address || "");
+  const [addressName, setAddressName] = useState(auth.user?.name || "");
+  const [guestName, setGuestName] = useState("");
+  const [guestEmail, setGuestEmail] = useState("");
+  const [guestAddress, setGuestAddress] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const totalPrice = () => {
     return cart
@@ -22,22 +34,90 @@ const CartPage = () => {
   };
 
   const handleIncreaseQuantity = (id) => {
-    console.log("Increase button clicked for product ID:", id);
     increaseQuantity(id);
   };
 
   const handleDecreaseQuantity = (id) => {
-    console.log("Decrease button clicked for product ID:", id);
     decreaseQuantity(id);
   };
 
   const handleRemoveFromCart = (id) => {
-    console.log("Remove button clicked for product ID:", id);
     removeFromCart(id);
   };
 
   const handleAddressChange = (e) => {
     setAddress(e.target.value);
+  };
+
+  const handleNameChange = (e) => {
+    setAddressName(e.target.value);
+  };
+
+  const handleGuestNameChange = (e) => {
+    setGuestName(e.target.value);
+  };
+
+  const handleGuestEmailChange = (e) => {
+    setGuestEmail(e.target.value);
+  };
+
+  const handleGuestAddressChange = (e) => {
+    setGuestAddress(e.target.value);
+  };
+
+  console.log("Auth User:", auth.user);
+  console.log("Auth Token:", auth.token);
+
+  const handlePlaceOrder = async () => {
+    setLoading(true);
+
+    try {
+      const orderData = {
+        products: cart.map((item) => ({
+          productId: item._id,
+          quantity: item.quantity,
+          slug: item.slug,
+        })),
+        buyer: auth.user ? auth.user._id : null,
+        payment: paymentMethod,
+        address: address,
+        guestName: !auth.user ? guestName : undefined,
+        guestEmail: !auth.user ? guestEmail : undefined,
+        guestAddress: !auth.user ? guestAddress : undefined,
+      };
+
+      const config = {
+        headers: {},
+      };
+
+      // Only add Authorization header if the user is authenticated
+      if (auth.token) {
+        config.headers.Authorization = `Bearer ${auth.token}`;
+      }
+
+      const response = await axios.post(
+        `${import.meta.env.VITE_API}/api/v1/auth/create-order`,
+        orderData,
+        config // Pass the config with the token header
+      );
+
+      console.log("Order data being sent:", orderData); // Logging order data
+
+      if (response.data.success) {
+        console.log("Order placed successfully", response.data.order);
+        clearCart();
+
+        navigate(`/order/${response.data.order._id}`, {
+          state: { order: response.data.order },
+        });
+      } else {
+        console.error("Error placing the order");
+      }
+    } catch (error) {
+      console.error("Error placing the order: ", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -113,18 +193,34 @@ const CartPage = () => {
               </select>
             </div>
             <div className='mt-4'>
-              <label htmlFor='address' className='form-label'>
+              <label htmlFor='name' className='form-label'>
                 Full Name
               </label>
               {auth.user ? (
                 <h4>{auth.user?.name}</h4>
               ) : (
-                <textarea
+                <input
                   id='full-name'
                   className='form-control'
                   placeholder='Enter your name'
-                  value={address}
-                  onChange={handleAddressChange}
+                  value={guestName}
+                  onChange={handleGuestNameChange}
+                />
+              )}
+            </div>
+            <div className='mt-4'>
+              <label htmlFor='email' className='form-label'>
+                Email Address
+              </label>
+              {auth.user ? (
+                <h4>{auth.user?.email}</h4>
+              ) : (
+                <input
+                  id='email'
+                  className='form-control'
+                  placeholder='Enter your email'
+                  value={guestEmail} 
+                  onChange={handleGuestEmailChange} 
                 />
               )}
             </div>
@@ -139,14 +235,19 @@ const CartPage = () => {
                   id='address'
                   className='form-control'
                   placeholder='Enter your address'
-                  value={address}
-                  onChange={handleAddressChange}
+                  value={guestAddress} 
+                  onChange={handleGuestAddressChange} 
                 />
               )}
             </div>
 
             <div>
-              <h3>Place Order</h3>
+              <button
+                className='btn btn-primary'
+                onClick={handlePlaceOrder}
+                disabled={loading}>
+                {loading ? "Placing Order..." : "Place Order"}
+              </button>
             </div>
           </div>
         </div>
