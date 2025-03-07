@@ -13,7 +13,7 @@ const Hero = () => {
       }}>
       <div className='h-100 d-flex justify-content-start align-items-center'>
         <div className='text-left text-white move-text'>
-          <h5 className='mb-4 text-muted'>Materials/ Dresses/Tops</h5>
+          <h5 className='mb-2 text-muted'>Materials/ Dresses/Tops</h5>
           <h1 className='mb-3 display-1 text-black'>Wear Color</h1>
           <Button
             size='lg'

@@ -17,20 +17,18 @@ const Footer = () => {
               Lagos, Nigeria.
             </p>
             <div>
-              <Link to='#' className='text-light me-3'>
-                Facebook-f
-              </Link>
-              <Link to='#' className='text-light me-3'>
-                Twitter
-              </Link>
-              <Link to='#' className='text-light'>
+              <Link
+                to='https://www.instagram.com/theadirebrand/'
+                target='_blank'
+                className='text-light nav-link-custom'>
                 Instagram
               </Link>
             </div>
             <p className='mt-3'>
               Site by{" "}
               <a
-                href='https://rvo-media.com'
+                href='https://idayatsannia.netlify.app/'
+                target='_blank'
                 className='text-light nav-link-custom'>
                 Idayat Sanni
               </a>
@@ -38,7 +36,6 @@ const Footer = () => {
           </Col>
 
           <Col xs={12} md={4} className='d-flex flex-column mb-4'>
-            {/* Quick Links */}
             <div className='mb-4'>
               <h5>QUICK LINKS</h5>
               <ul className='list-unstyled'>
@@ -87,21 +84,20 @@ const Footer = () => {
           </Col>
           <Col xs={12} md={4} className='text-center'>
             <h5>Contact Info</h5>
-            <p>Phone: +2348060506980</p>
+            <p>Phone: +234260506980</p>
             <p>theadirebrand@gmail.com</p>
             <p>
               Store open: 9:00 – 17:30, Monday – Friday, 10:00 – 17:00, Saturday
             </p>
-            <p>
-              Address: Plot 25, Block 72 Adebisi Popoola Crescent Off Victoria
-              Arobieke, Lekki Phase 1, Lagos, Nigeria.
-            </p>
+            <p>Victoria Arobieke, Lekki Phase 1, Lagos, Nigeria.</p>
           </Col>
         </Row>
       </Container>
 
       <div className='bg-dark text-light py-3'>
-        <p className='text-center mb-0'>All Rights Reserved &copy; Idayat</p>
+        <p className='text-center mb-0'>
+          All Rights Reserved &copy; TheAdireBrand
+        </p>
       </div>
     </div>
   );

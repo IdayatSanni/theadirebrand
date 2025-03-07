@@ -47,7 +47,9 @@ const ProductCard = ({
   };
 
   return (
-    <MDBCard style={{ width: "350px" }}>
+    <MDBCard
+      style={{ width: "350px" }}
+      className='d-flex flex-column align-items-center'>
       <Link to={`/product/${productSlug}`}>
         <MDBCardImage
           src={imageSrc}
@@ -57,27 +59,39 @@ const ProductCard = ({
           style={{ width: "350px", height: "180px" }}
         />
       </Link>
-      <MDBCardBody>
+      <MDBCardBody
+        className='d-flex flex-column align-items-center'
+        style={{ width: "270px" }}>
         {showCategory && productCategory && (
-          <div className='d-flex justify-content-between'>
+          <div className='d-flex justify-content-between w-100'>
             <p className='small'>{productCategory}</p>
           </div>
         )}
-        <div className='d-flex justify-content-between mb-3'>
+
+        <div className='d-flex justify-content-between w-100 mb-3'>
           <h5 className='mb-0'>{productName}</h5>
           {showPrice && (
             <h5 className='text-dark mb-0'>{`₦${originalPrice}`}</h5>
           )}
         </div>
-        {showAddToCartButton && (
-          <button
-            className='btn btn-secondary ms-1 search-button'
-            onClick={handleAddToCart}
-            disabled={productQuantity <= 0}>
-            {productQuantity <= 0 ? "SOLD OUT" : "ADD TO CART"}
-          </button>
-        )}
-        {showAddToView && <Link to={`/product/${productSlug}`}>View</Link>}
+
+        <div className='d-flex justify-content-between w-100'>
+          {showAddToView && (
+            <Link
+              to={`/product/${productSlug}`}
+              className='btn search-button ms-1'>
+              View
+            </Link>
+          )}
+          {showAddToCartButton && (
+            <button
+              className='btn ms-1 search-button'
+              onClick={handleAddToCart}
+              disabled={productQuantity <= 0}>
+              {productQuantity <= 0 ? "SOLD OUT" : "ADD TO CART"}
+            </button>
+          )}
+        </div>
       </MDBCardBody>
     </MDBCard>
   );

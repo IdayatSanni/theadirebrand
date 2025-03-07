@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import LayoutTheme from "../components/Layout/LayoutTheme";
-import { Container, Row } from "react-bootstrap";
+import { Container, Row, Col, Button } from "react-bootstrap";
 import axios from "axios";
-import ProductCard from "../components/ProductCard"; // Import ProductCard
+import ProductCard from "../components/ProductCard";
 import Hero from "../components/Hero";
 
 const HomePage = () => {
@@ -48,40 +48,67 @@ const HomePage = () => {
     <LayoutTheme title={"Home"}>
       <Hero />
       <Container className='my-5 container'>
-        <h4 className='text-center mt-4'>Featured Products</h4>
-        {loading ? (
-          <div className='text-center'>Loading Products...</div>
-        ) : (
-          <Row>
-            {products?.slice(0, 3).map((p) => (
-              <div key={p._id} className='col-lg-4 mb-4'>
-                <ProductCard
-                  _id={p._id}
-                  imageSrc={`${
-                    import.meta.env.VITE_API
-                  }/api/v1/product/product-photo/${p._id}`}
-                  productName={p.name}
-                  productCategory={p.category}
-                  originalPrice={p.price}
-                  productSlug={p.slug}
-                  productQuantity={p.quantity}
-                  showCategory={false}
-                  showPrice={false}
-                  showAddToView={false}
-                  showAddToCartButton={false}
-                />
-              </div>
-            ))}
-          </Row>
-        )}
-
-        <h4 className='text-center mt-4'>Bestsellers</h4>
+        <div className='mb-6'>
+          <h1 className='text-center display-2'>Products</h1>
+          <p
+            className='text-center mb-4 homepage-text'
+            style={{ width: "400px", textAlign: "center", margin: "0 auto" }}>
+            Shop the latest Adire textiles: crafted by hand, inspired by
+            culture, worn with pride.
+          </p>
+          <div className='d-flex justify-content-center'>
+            <Button
+              size='lg'
+              className='mb-4 px-5 search-button-outline text-center'
+              href='/shopall'
+              target='_self'>
+              Shop Now
+            </Button>
+          </div>
+          {loading ? (
+            <div className='text-center'>Loading Products...</div>
+          ) : (
+            <Row className='justify-content-center align-items-center'>
+              {products?.slice(0, 3).map((p) => (
+                <Col
+                  key={p._id}
+                  className='col-lg-4 mb-2 centered-card'
+                  lg={4}
+                  md={6}
+                  sm={12}>
+                  <ProductCard
+                    _id={p._id}
+                    imageSrc={`${
+                      import.meta.env.VITE_API
+                    }/api/v1/product/product-photo/${p._id}`}
+                    productName={p.name}
+                    productCategory={p.category}
+                    originalPrice={p.price}
+                    productSlug={p.slug}
+                    productQuantity={p.quantity}
+                    showCategory={false}
+                    showPrice={false}
+                    showAddToView={false}
+                    showAddToCartButton={false}
+                  />
+                </Col>
+              ))}
+            </Row>
+          )}
+        </div>
+        <h2 className='text-center display-2'>Bestsellers</h2>
+        <p
+          className='text-center mb-4 homepage-text'
+          style={{ width: "400px", textAlign: "center", margin: "0 auto" }}>
+          Discover the latest bestsellers in style and tradition. Crafted for
+          the modern man who values tradition.
+        </p>
         {loadingBestsellers ? (
           <div className='text-center'>Loading Bestsellers...</div>
         ) : (
           <Row>
             {bestsellers?.slice(0, 3).map((p) => (
-              <div key={p._id} className='col-lg-4 mb-1'>
+              <Col key={p._id} className='col-lg-4 mb-2 centered-card'>
                 <ProductCard
                   _id={p._id}
                   imageSrc={`${
@@ -95,7 +122,7 @@ const HomePage = () => {
                   showCategory={false}
                   showPrice={true}
                 />
-              </div>
+              </Col>
             ))}
           </Row>
         )}

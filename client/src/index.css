@@ -10,6 +10,11 @@ body {
   background-color: #f6efeb;
 }
 
+h1,
+h2 {
+  margin-bottom: 0.2em !important;
+}
+
 .navbar-bg {
   font-family: "Poppins", sans-serif;
   font-size: 17px;
@@ -103,6 +108,18 @@ ul {
 .search-button:hover {
   background-color: #f6efeb !important;
   color: #792f04;
+}
+
+.search-button-outline {
+  background-color: #792f0400 !important;
+  color: #000000;
+  border: 1px solid #000;
+  box-shadow: none;
+}
+
+.search-button-outline:hover {
+  background-color: #792f04 !important;
+  color: #f6efeb;
 }
 
 .price {
@@ -232,7 +249,11 @@ ul {
 .cart-page .cart-summary {
   text-align: center;
 }
-
+.centered-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .category {
   flex-wrap: wrap;
   margin-top: 80px !important;
@@ -428,6 +449,14 @@ filters
 
   .search-button {
     font-size: 0.8em;
+  }
+
+  .search-button-outline {
+    font-size: 0.8em;
+  }
+
+  .homepage-text {
+    width: auto !important;
   }
 
   .dropdown-menu.show {
