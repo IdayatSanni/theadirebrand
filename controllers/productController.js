@@ -12,7 +12,7 @@ export const createProductController = async (req, res) => {
       name,
       description,
       price,
-      category, // Comma-separated string of ObjectIds
+      category,
       quantity,
       shipping,
       bestseller,
@@ -21,16 +21,13 @@ export const createProductController = async (req, res) => {
     } = req.fields;
     const { photo } = req.files;
 
-    // Validate categories if they are provided as a string (comma-separated)
     let categoryIds = [];
     if (category) {
-      // Split string by commas and convert each ID to ObjectId
       categoryIds = category
         .split(",")
         .map((id) => new mongoose.Types.ObjectId(id.trim()));
     }
 
-    // Validate the rest of the fields
     switch (true) {
       case !name:
         return res.status(500).send({ error: "Name is Required" });
@@ -50,7 +47,6 @@ export const createProductController = async (req, res) => {
           .send({ error: "Photo is required and should be less than 1MB" });
     }
 
-    // Check for valid yard and length as you did previously
     let yardData = null;
     if (yard) {
       yardData = await yardModel.findById(yard);
@@ -67,17 +63,15 @@ export const createProductController = async (req, res) => {
       }
     }
 
-    // Create product with proper category assignment
     const product = new productModel({
       ...req.fields,
       slug: slugify(name),
       bestseller: bestseller || false,
-      category: categoryIds, // Set the category as an array of ObjectIds
+      category: categoryIds,
       yard: yardData ? yardData._id : null,
       length: lengthData ? lengthData._id : null,
     });
 
-    // Save photo if exists
     if (photo) {
       product.photo.data = fs.readFileSync(photo.path);
       product.photo.contentType = photo.type;
@@ -266,17 +260,14 @@ export const productFiltersController = async (req, res) => {
 
     let args = {};
 
-    // Handle category filter
     if (checked.length > 0) {
-      args.category = { $in: checked }; // Assuming checked is an array of ObjectId values
+      args.category = { $in: checked };
     }
 
-    // Handle price range filter
     if (radio.length) {
       args.price = { $gte: radio[0], $lte: radio[1] };
     }
 
-    // Fetch the products with the applied filters
     const products = await productModel.find(args);
 
     res.status(200).send({
@@ -312,39 +303,36 @@ export const productCountController = async (req, res) => {
 
 export const productListController = async (req, res) => {
   try {
-    // Destructure the query parameters (checked, radio, page, limit)
     const { checked = "", radio = [], page = 1, limit = 12 } = req.query;
 
-    // Initialize the arguments for the MongoDB query
     let args = {};
 
-    // Handle category filter
-    if (checked && checked.length > 0) {
-      args.category = { $in: checked.split(",") }; // Convert string to an array of ObjectIds
+    let priceRange = [];
+    if (typeof radio === "string") {
+      priceRange = radio.split(",").map(Number);
+    } else if (Array.isArray(radio)) {
+      priceRange = radio.map(Number);
     }
 
-    // Handle price range filter
-    if (radio && radio.length === 2) {
-      const [minPrice, maxPrice] = radio;
+    if (checked && checked.length > 0) {
+      args.category = { $in: checked.split(",") };
+    }
+
+    if (priceRange.length === 2) {
+      const [minPrice, maxPrice] = priceRange;
       if (!isNaN(minPrice) && !isNaN(maxPrice)) {
-        args.price = { $gte: parseInt(minPrice), $lte: parseInt(maxPrice) }; // Apply price range filter
+        args.price = { $gte: minPrice, $lte: maxPrice };
       }
     }
 
-    // Debugging line: Check how the final query args look
-    console.log("Constructed Query Args:", args);
-
-    // Fetch the filtered products from the database
     const filteredProducts = await productModel.find(args);
 
-    // Handle Pagination
     const totalProducts = filteredProducts.length;
     const paginatedProducts = filteredProducts.slice(
       (page - 1) * limit,
       page * limit
     );
 
-    // Send the response
     res.status(200).send({
       success: true,
       products: paginatedProducts,
@@ -361,22 +349,19 @@ export const productListController = async (req, res) => {
   }
 };
 
-// In your productController.js
 export const searchProductController = async (req, res) => {
   try {
-    const { keyword } = req.params; // Fetch the search term from the URL parameter
+    const { keyword } = req.params;
 
-    // Perform a case-insensitive search on the product name and description
     const results = await productModel
       .find({
         $or: [
-          { name: { $regex: keyword, $options: "i" } }, // Search in product name
-          { description: { $regex: keyword, $options: "i" } }, // Search in product description
+          { name: { $regex: keyword, $options: "i" } },
+          { description: { $regex: keyword, $options: "i" } },
         ],
       })
-      .select("-photo"); // Exclude photo field to keep the response lighter
+      .select("-photo");
 
-    // Return the search results
     res.status(200).json(results);
   } catch (error) {
     console.log(error);

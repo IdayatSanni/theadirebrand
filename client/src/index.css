@@ -35,6 +35,7 @@ body {
 
 .nav-link-custom {
   font-weight: bold;
+  text-decoration: none;
   color: #ffffff !important;
 }
 .nav-link-custom:hover {
@@ -62,6 +63,11 @@ body {
 .nav-link {
   font-weight: 300 !important;
 }
+.move-text {
+  margin-left: 0;
+  margin-right: 0;
+  padding: 0;
+}
 
 .nav-link:hover {
   color: #792f04;
@@ -79,6 +85,11 @@ ul {
   margin-bottom: 0 !important;
 }
 
+#intro-example {
+  height: 600px;
+  background-position: center;
+}
+
 .img-fluid {
   object-fit: cover;
 }
@@ -86,6 +97,7 @@ ul {
 .search-button {
   background-color: #792f04;
   color: #f6efeb;
+  border: 0;
 }
 
 .search-button:hover {
@@ -103,25 +115,6 @@ ul {
 
 .navbar-brand:hover {
   color: #792f04;
-}
-
-.footer {
-  color: white;
-  padding: 25px;
-  background: #000000;
-  background: -webkit-linear-gradient(to right, #434343, #000000);
-  background: linear-gradient(to right, #434343, #000000);
-}
-
-.footer a {
-  text-decoration: none;
-  color: white;
-  padding: 10px;
-}
-
-.footer a:hover {
-  color: #ffefba;
-  border-bottom: 1px solid #ffefba;
 }
 
 .pnf {
@@ -421,6 +414,20 @@ filters
   .navbar-bg {
     font-size: 14px;
     line-height: 26px;
+  }
+
+  #intro-example {
+    height: 400px;
+    background-position: 65% 8% !important;
+  }
+
+  .move-text {
+    margin-left: -30px;
+    margin-right: 0;
+  }
+
+  .search-button {
+    font-size: 0.8em;
   }
 
   .dropdown-menu.show {

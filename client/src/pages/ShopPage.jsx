@@ -16,7 +16,7 @@ const ShopPage = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [checked, setChecked] = useState([]);
-  const [radio, setRadio] = useState([]);
+  const [radio, setRadio] = useState([]); // state for price filter
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -58,15 +58,15 @@ const ShopPage = () => {
     setChecked(all);
   };
 
-  // Triggered when a price radio button is selected
+  
   const handlePriceFilter = (value) => {
-    console.log("Selected Price Range:", value);
-    setRadio(value);
-  };
+    
 
-  // Toggle visibility of the cart dropdown
-  const toggleCartVisibility = () => {
-    setIsCartOpen(!isCartOpen);
+    
+    const selectedRange = Prices.find((price) => price._id === value);
+    if (selectedRange) {
+      setRadio(selectedRange.array); 
+    }
   };
 
   useEffect(() => {
@@ -76,11 +76,11 @@ const ShopPage = () => {
 
   return (
     <LayoutTheme title={"Shop"}>
-      {/* Main container with layout */}
+      
       <div className='container-fluid row mt-3'>
-        {/* Sidebar for filters */}
+        
         <div className='col-md-3 col-lg-2'>
-          {/* Category filter */}
+          
           <div className='d-md-block d-none'>
             <h4 className='text-center mb-4'>Filter By Category</h4>
             <div className='d-flex flex-column'>
@@ -94,14 +94,14 @@ const ShopPage = () => {
             </div>
           </div>
 
-          {/* Price filter */}
+          
           <div className='d-md-block d-none mt-5'>
             <h4 className='text-center mb-4'>Filter By Price</h4>
             <div className='d-flex flex-column'>
               <Radio.Group onChange={(e) => handlePriceFilter(e.target.value)}>
                 {Prices?.map((p) => (
                   <div key={p._id}>
-                    <Radio value={p.array}>{p.name}</Radio>
+                    <Radio value={p._id}>{p.name}</Radio> {/* Use p._id */}
                   </div>
                 ))}
               </Radio.Group>
@@ -109,18 +109,18 @@ const ShopPage = () => {
           </div>
         </div>
 
-        {/* Product list */}
+        
         <div className='col-md-9 col-lg-10'>
           <h1 className='text-center mb-5'>All Products</h1>
-          {/* Pass the selected filters to the ProductList component */}
+          
           <ProductList
             limit={2}
-            filters={{ checked, radio }} // Filters passed here
+            filters={{ checked, radio }} 
           />
         </div>
       </div>
 
-      {/* Cart dropdown toggle */}
+      
       {isCartOpen && (
         <CartDropdown
           isCartOpen={isCartOpen}

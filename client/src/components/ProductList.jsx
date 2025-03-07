@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import ProductCard from "./ProductCard"; 
-
+import ProductCard from "./ProductCard";
 
 const ProductList = ({ limit = 12, filters }) => {
-  const { checked, radio } = filters; 
+  const { checked, radio } = filters;
   const [products, setProducts] = useState([]);
   const [totalProducts, setTotalProducts] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(1); 
+  const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(limit);
-
+  
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -20,13 +19,14 @@ const ProductList = ({ limit = 12, filters }) => {
           `${import.meta.env.VITE_API}/api/v1/product/product-list`,
           {
             params: {
-              checked: checked.join(","), 
-              radio: radio.join(","), 
-              page, 
+              checked: checked.join(","),
+              radio: radio.join(","),
+              page,
               limit: perPage,
             },
           }
         );
+        
 
         setProducts(data.products);
         setTotalProducts(data.countTotal);
@@ -37,25 +37,20 @@ const ProductList = ({ limit = 12, filters }) => {
       }
     };
 
-    
     fetchProducts();
   }, [checked, radio, page, perPage]);
-
 
   const handlePageChange = (newPage) => {
     setPage(newPage);
   };
 
-
   const handlePerPageChange = (e) => {
     setPerPage(Number(e.target.value));
-    setPage(1); 
+    setPage(1);
   };
 
- 
   const totalPages =
     totalProducts && perPage ? Math.ceil(totalProducts / perPage) : 0;
-  console.log("Filters in ProductList:", filters); 
 
   return (
     <div className='container my-5'>
@@ -105,7 +100,6 @@ const ProductList = ({ limit = 12, filters }) => {
         )}
       </div>
 
-      
       <div className='row'>
         <div className='col-12'>
           <nav>

@@ -79,7 +79,7 @@ const Header = () => {
         </Container>
       </Navbar>
 
-      <Navbar expand='lg' className='navbar-btm mb-3'>
+      <Navbar expand='lg' className='navbar-btm'>
         <Container fluid className='container'>
           <Navbar.Brand as={Link} to='/'>
             TheAdireBrand

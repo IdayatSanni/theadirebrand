@@ -15,7 +15,7 @@ const ProductCard = ({
   showCategory = true,
   showPrice = true,
   showAddToCartButton = true,
-  showAddToView = true, 
+  showAddToView = true,
 }) => {
   const { cart, addToCart, toggleCartVisibility } = useCart();
 
@@ -38,8 +38,6 @@ const ProductCard = ({
       image: imageSrc,
       quantity: 1,
     };
-
-    console.log("Product to add to cart:", product);
 
     addToCart(product);
 
