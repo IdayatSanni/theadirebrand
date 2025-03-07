@@ -30,7 +30,7 @@ const AdminOrders = () => {
         }
       );
       setOrders(data);
-      console.log(data);
+      
     } catch (error) {
       console.log(error);
       toast.error("Error fetching orders.");
@@ -73,55 +73,51 @@ const AdminOrders = () => {
           {orders?.map((o, i) => {
             return (
               <div className='border shadow' key={o._id}>
-                <table className='table'>
-                  <thead>
-                    <tr>
-                      <th scope='col'>#</th>
-                      <th scope='col'>Status</th>
-                      <th scope='col'>Buyer</th>
-                      <th scope='col'>Date</th>
-                      <th scope='col'>Payment</th>
-                      <th scope='col'>Quantity</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>{i + 1}</td>
-                      <td>
-                        <Select
-                          variant='outlined'
-                          onChange={(value) => handleChange(o._id, value)}
-                          defaultValue={o?.status}>
-                          {status.map((s, i) => (
-                            <Option key={i} value={s}>
-                              {s}
-                            </Option>
-                          ))}
-                        </Select>
-                      </td>
-                      <td>{o?.buyer?.name || o?.guestName} </td>
-                      <td>{moment(o?.createdAt).fromNow()}</td>{" "}
-                      <td>
-                        {o?.payment === "payment_on_delivery"
-                          ? "Pending"
-                          : "Paid"}
-                      </td>{" "}
-                      <td>{o?.products?.length}</td>
-                    </tr>
-                  </tbody>
-                </table>
-                <div className='container'>
-                  {o?.products?.map((p) => (
-                    <div
-                      className='row mb-2 p-3 card flex-row'
-                      key={p.productId._id}>
-                      <div className='col-md-8'>
-                        <p>{p.productId.name}</p>
-                        <p>Price: {p.productId.price}</p>
-                        <p>Quantity: {p.quantity}</p>{" "}
-                      </div>
-                    </div>
-                  ))}
+                <div className='table-responsive'>
+                  <table className='table'>
+                    <thead>
+                      <tr>
+                        <th scope='col'>#</th>
+                        <th scope='col'>Buyer</th>
+                        <th scope='col'>Product Name</th>
+                        <th scope='col'>Price</th>
+                        <th scope='col'>Quantity</th>
+                        <th scope='col'>Total</th>
+                        <th scope='col'>Payment</th>
+                        <th scope='col'>Order Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {o?.products?.map((p, index) => (
+                        <tr key={p.productId._id || p.productId.slug}>
+                          <td>{index + 1}</td>
+                          <td>{o?.buyer?.name || o?.guestName}</td>
+                          <td>{p.productId.name}</td>
+                          <td>₦{p.productId.price}</td>
+                          <td>{p.quantity}</td>
+                          <td>
+                            ₦
+                            {(p.productId.price * p.quantity).toLocaleString(
+                              "en-US"
+                            )}
+                          </td>
+                          <td>{o.payment}</td>
+                          <td>
+                            <Select
+                              onChange={(value) => handleChange(o._id, value)}
+                              defaultValue={o?.status}
+                              style={{ width: "100%" }}>
+                              {status.map((s, i) => (
+                                <Option key={i} value={s}>
+                                  {s}
+                                </Option>
+                              ))}
+                            </Select>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             );

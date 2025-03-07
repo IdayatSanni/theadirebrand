@@ -12,7 +12,7 @@ const CategoryProduct = () => {
 
   useEffect(() => {
     if (params?.slug) {
-      console.log("Fetching products for category:", params.slug);
+      
       getProductsByCat();
     }
   }, [params?.slug]);

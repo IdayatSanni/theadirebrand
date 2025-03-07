@@ -28,14 +28,14 @@ export const createOrderController = async (req, res) => {
       orderData.guestEmail = guestEmail;
       orderData.guestAddress = guestAddress;
     }
-    console.log("Authenticated User: ", req.user);
+    
 
     const order = new orderModel(orderData);
-    console.log("Order Data Before Saving: ", orderData);
+    
 
     await order.save();
 
-    console.log("Order Data: after saving", orderData);
+    
 
     for (let item of products) {
       const product = await productModel.findById(item.productId);

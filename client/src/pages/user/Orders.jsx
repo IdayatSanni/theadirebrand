@@ -19,7 +19,7 @@ const Orders = () => {
           },
         }
       );
-      console.log("Fetched Orders:", data);
+      
       setOrders(data);
     } catch (error) {
       console.log("Error fetching orders:", error);
@@ -43,45 +43,46 @@ const Orders = () => {
             <h1 className='text-center'>All Orders</h1>
             {orders?.map((order, i) => (
               <div className='border shadow' key={order._id || i}>
-                <table className='table'>
-                  <thead>
-                    <tr>
-                      <th scope='col'>#</th>
-                      <th scope='col'>Status</th>
-                      <th scope='col'>Buyer</th>
-                      <th scope='col'>Date</th>
-                      <th scope='col'>Payment</th>
-                      <th scope='col'>Quantity</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>{i + 1}</td>
-                      <td>{order?.status}</td>
-                      <td>{order?.buyer?.name}</td>
-                      <td>{moment(order?.createdAt).fromNow()}</td>
-                      <td>{order?.payment}</td>
-                      <td>{order?.products?.length}</td>
-                    </tr>
-                  </tbody>
-                </table>
-
-                <div className='container'>
-                  {order?.products && order.products.length > 0 ? (
-                    order.products.map((product, index) => (
-                      <div
-                        className='row mb-2 p-3 card flex-row'
-                        key={product._id || product.slug || product.name}>
-                        <div className='col-md-8'>
-                          <p>{product.productId.name}</p>
-
-                          <p>Price: {product.productId.price}</p>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <p>No products found in this order.</p>
-                  )}
+                <div className='table-responsive'>
+                  <table className='table'>
+                    <thead>
+                      <tr>
+                        <th scope='col'>#</th>
+                        <th scope='col'>Product Name</th>
+                        <th scope='col'>Total</th>
+                        <th scope='col'>Quantity</th>
+                        <th scope='col'>Payment</th>
+                        <th scope='col'>Status</th>
+                        <th scope='col'>Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {order?.products && order.products.length > 0 ? (
+                        order.products.map((product, index) => (
+                          <tr key={product._id || product.slug || product.name}>
+                            <td>{index + 1}</td>
+                            <td>{product.productId.name}</td>
+                            <td>
+                              ₦
+                              {(
+                                product.productId.price * product.quantity
+                              ).toLocaleString("en-US")}
+                            </td>
+                            <td>{product.quantity}</td>
+                            <td>{order?.payment}</td>
+                            <td>{order?.status}</td>
+                            <td>{moment(order?.createdAt).fromNow()}</td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan='7' className='text-center'>
+                            No products found in this order.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             ))}
