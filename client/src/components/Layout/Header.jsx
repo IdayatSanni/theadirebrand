@@ -81,23 +81,20 @@ const Header = () => {
 
       <Navbar expand='lg' className='navbar-btm'>
         <Container fluid className='container'>
-          <Navbar.Brand as={Link} to='/'>
-            TheAdireBrand
-          </Navbar.Brand>
           <Navbar.Toggle aria-controls='offcanvasNavbar'>
             <HiOutlineBars3 />
           </Navbar.Toggle>
           <Navbar.Offcanvas
             id='offcanvasNavbar'
             aria-labelledby='offcanvasNavbarLabel'
-            placement='end'>
+            placement='start'>
             <Offcanvas.Header closeButton>
               <Offcanvas.Title id='offcanvasNavbarLabel'>
                 TheAdireBrand
               </Offcanvas.Title>
             </Offcanvas.Header>
             <Offcanvas.Body>
-              <Nav className='justify-content-center flex-grow-1'>
+              <Nav className='justify-content-start flex-grow-1'>
                 <Nav.Link as={Link} to='/'>
                   Home
                 </Nav.Link>
@@ -114,22 +111,20 @@ const Header = () => {
                 <Nav.Link as={Link} to='/shopall'>
                   Shop All
                 </Nav.Link>
+                <SearchInput />
               </Nav>
-
-              <div className='d-flex align-items-center justify-content-between gap-3'>
-                <div>
-                  <SearchInput />
-                </div>
-                <div>
-                  <Badge count={cart?.length} showZero>
-                    <Nav.Link as={Link} to='/cart'>
-                      Cart
-                    </Nav.Link>
-                  </Badge>
-                </div>
-              </div>
             </Offcanvas.Body>
           </Navbar.Offcanvas>
+          <Navbar.Brand as={Link} to='/'>
+            TheAdireBrand
+          </Navbar.Brand>
+          <div>
+            <Badge count={cart?.length} showZero>
+              <Nav.Link as={Link} to='/cart'>
+                Cart
+              </Nav.Link>
+            </Badge>
+          </div>
         </Container>
       </Navbar>
     </>

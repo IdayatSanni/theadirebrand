@@ -10,15 +10,14 @@ const SearchInput = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!values.keyword.trim()) return; 
+    if (!values.keyword.trim()) return;
 
     try {
-      
       const { data } = await axios.get(
         `${import.meta.env.VITE_API}/api/v1/product/search/${values.keyword}`
       );
-      setValues({ ...values, results: data }); 
-      navigate("/search"); 
+      setValues({ ...values, results: data });
+      navigate("/search");
     } catch (error) {
       console.error("Error during search:", error);
     }
