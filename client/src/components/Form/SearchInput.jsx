@@ -2,22 +2,28 @@ import React from "react";
 import { useSearch } from "../../context/search";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+
 const SearchInput = () => {
   const [values, setValues] = useSearch();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!values.keyword.trim()) return; 
+
     try {
+      
       const { data } = await axios.get(
-        `/api/v1/product/search/${values.keyword}`
+        `${import.meta.env.VITE_API}/api/v1/product/search/${values.keyword}`
       );
-      setValues({ ...values, results: data });
-      navigate("/search");
+      setValues({ ...values, results: data }); 
+      navigate("/search"); 
     } catch (error) {
-      console.log(error);
+      console.error("Error during search:", error);
     }
   };
+
   return (
     <div>
       <form className='d-flex' role='search' onSubmit={handleSubmit}>
