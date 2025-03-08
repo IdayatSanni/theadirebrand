@@ -18,6 +18,7 @@ const HomePage = () => {
         `${import.meta.env.VITE_API}/api/v1/product/bestsellers`
       );
       setBestsellers(data.products);
+
       setLoadingBestsellers(false);
     } catch (error) {
       setLoadingBestsellers(false);
@@ -69,30 +70,33 @@ const HomePage = () => {
             <div className='text-center'>Loading Products...</div>
           ) : (
             <Row className='justify-content-center align-items-center'>
-              {products?.slice(0, 3).map((p) => (
-                <Col
-                  key={p._id}
-                  className='col-lg-4 mb-2 centered-card'
-                  lg={4}
-                  md={6}
-                  sm={12}>
-                  <ProductCard
-                    _id={p._id}
-                    imageSrc={`${
-                      import.meta.env.VITE_API
-                    }/api/v1/product/product-photo/${p._id}`}
-                    productName={p.name}
-                    productCategory={p.category}
-                    originalPrice={p.price}
-                    productSlug={p.slug}
-                    productQuantity={p.quantity}
-                    showCategory={false}
-                    showPrice={false}
-                    showAddToView={false}
-                    showAddToCartButton={false}
-                  />
-                </Col>
-              ))}
+              {products
+                ?.slice(0, 3)
+                .reverse()
+                .map((p) => (
+                  <Col
+                    key={p._id}
+                    className='col-lg-4 mb-2 centered-card'
+                    lg={4}
+                    md={6}
+                    sm={12}>
+                    <ProductCard
+                      _id={p._id}
+                      imageSrc={`${
+                        import.meta.env.VITE_API
+                      }/api/v1/product/product-photo/${p._id}`}
+                      productName={p.name}
+                      productCategory={p.category}
+                      originalPrice={p.price}
+                      productSlug={p.slug}
+                      productQuantity={p.quantity}
+                      showCategory={false}
+                      showPrice={false}
+                      showAddToView={false}
+                      showAddToCartButton={false}
+                    />
+                  </Col>
+                ))}
             </Row>
           )}
         </div>

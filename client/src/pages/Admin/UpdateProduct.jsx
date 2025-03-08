@@ -23,12 +23,14 @@ const UpdateProduct = () => {
   const [id, setId] = useState("");
   const [selectedYard, setSelectedYard] = useState("");
   const [selectedLength, setSelectedLength] = useState("");
+  const [isBestseller, setIsBestseller] = useState(false);
 
   const getSingleProduct = async () => {
     try {
       const { data } = await axios.get(
         `${import.meta.env.VITE_API}/api/v1/product/get-product/${params.slug}`
       );
+
       setName(data.product.name);
       setId(data.product._id);
       setDescription(data.product.description);
@@ -38,6 +40,7 @@ const UpdateProduct = () => {
       setCategory(data.product.category._id);
       setSelectedYard(data.product.yard);
       setSelectedLength(data.product.length);
+      setIsBestseller(data.product.bestseller);
     } catch (error) {
       console.log(error);
     }
@@ -103,11 +106,14 @@ const UpdateProduct = () => {
       productData.append("category", category);
       productData.append("yard", selectedYard);
       productData.append("length", selectedLength);
+      productData.append("bestseller", isBestseller);
 
       const { data } = await axios.put(
         `${import.meta.env.VITE_API}/api/v1/product/update-product/${id}`,
+
         productData
       );
+
       if (data?.success) {
         toast.success("Product Updated Successfully");
         navigate("/dashboard/admin/products");
@@ -276,6 +282,19 @@ const UpdateProduct = () => {
                   <Option value='1'>Yes</Option>
                 </Select>
               </div>
+
+              <div className='mb-3'>
+                <Select
+                  placeholder='Is Bestseller?'
+                  size='large'
+                  className='form-select mb-3'
+                  onChange={(value) => setIsBestseller(value === "1")}
+                  value={isBestseller ? "1" : "0"}>
+                  <Option value='0'>No</Option>
+                  <Option value='1'>Yes</Option>
+                </Select>
+              </div>
+
               <div className='mb-3'>
                 <button className='btn btn-primary' onClick={handleUpdate}>
                   UPDATE PRODUCT

@@ -183,6 +183,7 @@ export const updateProductController = async (req, res) => {
       shipping,
       yard,
       length,
+      bestseller,
     } = req.fields;
     const { photo } = req.files;
 
@@ -208,7 +209,7 @@ export const updateProductController = async (req, res) => {
       return res.status(404).send({ error: "Product not found" });
     }
 
-    const updatedFields = { ...req.fields, slug: slugify(name) };
+    const updatedFields = { ...req.fields, slug: slugify(name), bestseller };
 
     if (yard) {
       const existingYard = await yardModel.findById(yard);

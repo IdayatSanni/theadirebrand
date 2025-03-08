@@ -2,6 +2,7 @@ import React from "react";
 import { MDBCard, MDBCardBody, MDBCardImage } from "mdb-react-ui-kit";
 import { useCart } from "../context/cart";
 import { toast } from "react-toastify";
+
 import { Link } from "react-router-dom";
 
 const ProductCard = ({

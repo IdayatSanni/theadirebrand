@@ -39,7 +39,7 @@ const Products = () => {
                   <tr>
                     <th>Photo</th>
                     <th>Name</th>
-                    <th>Category</th>
+                    <th>Quantity</th>
                     <th>Price</th>
                     <th>Actions</th>
                   </tr>
@@ -58,7 +58,7 @@ const Products = () => {
                         />
                       </td>
                       <td>{p.name}</td>
-                      <td>{p.category?.name}</td>
+                      <td>{p.quantity}</td>
                       <td>{p.price}</td>
                       <td>
                         <Link
