@@ -89,18 +89,35 @@ const AdminOrders = () => {
                     </thead>
                     <tbody>
                       {o?.products?.map((p, index) => (
-                        <tr key={p.productId._id || p.productId.slug}>
+                        <tr
+                          key={
+                            p.productId?._id || p.productId?.slug || "unknown"
+                          }>
                           <td>{index + 1}</td>
-                          <td>{o?.buyer?.name || o?.guestName}</td>
-                          <td>{p.productId.name}</td>
-                          <td>₦{p.productId.price}</td>
+                          <td>
+                            {o?.buyer ? o.buyer.name : o?.guestName || "Guest"}
+                          </td>
+
+                          <td>
+                            {p.productId
+                              ? p.productId.name
+                              : "Product not found"}
+                          </td>
+                          <td>
+                            {p.productId ? `₦${p.productId.price}` : "₦0"}
+                          </td>
                           <td>{p.quantity}</td>
                           <td>
                             ₦
-                            {(p.productId.price * p.quantity).toLocaleString(
-                              "en-US"
-                            )}
+                            {(p.productId && p.productId.price
+                              ? p.productId.price
+                              : 0) *
+                              p.quantity.toLocaleString("en-US", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              })}
                           </td>
+
                           <td>{o.payment}</td>
                           <td>
                             <Select

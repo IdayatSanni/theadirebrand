@@ -21,6 +21,8 @@ export const createOrderController = async (req, res) => {
       status: "Not Processed",
     };
 
+    console.log("order products", orderProducts);
+    console.log("order data in controller", orderData);
     if (user) {
       orderData.buyer = user._id;
     } else {
@@ -28,18 +30,14 @@ export const createOrderController = async (req, res) => {
       orderData.guestEmail = guestEmail;
       orderData.guestAddress = guestAddress;
     }
-    
 
     const order = new orderModel(orderData);
-    
 
     await order.save();
 
-    
-
     for (let item of products) {
       const product = await productModel.findById(item.productId);
-
+      console.log("Product ID:", item.productId);
       if (product) {
         if (product.quantity >= item.quantity) {
           product.quantity -= item.quantity;
@@ -137,7 +135,6 @@ export const orderStatusController = async (req, res) => {
     const { orderId } = req.params;
     const { status } = req.body;
 
-    
     if (req.user.role !== 1) {
       return res.status(403).send({
         success: false,

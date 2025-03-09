@@ -41,6 +41,7 @@ const ProductDetails = () => {
 
     const newProduct = {
       _id: product._id,
+      slug: product.slug,
       name: product.name,
       price: product.price,
       image: `${import.meta.env.VITE_API}/api/v1/product/product-photo/${
