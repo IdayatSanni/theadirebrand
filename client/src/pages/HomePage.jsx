@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import LayoutTheme from "../components/Layout/LayoutTheme";
 import { Container, Row, Col, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import ProductCard from "../components/ProductCard";
 import Hero from "../components/Hero";
@@ -58,13 +59,15 @@ const HomePage = () => {
             culture, worn with pride.
           </p>
           <div className='d-flex justify-content-center'>
-            <Button
-              size='lg'
-              className='mb-4 px-5 search-button-outline text-center'
-              href='/shopall'
-              target='_self'>
-              Shop Now
-            </Button>
+            <Link to='/shopall'>
+              <button
+                size='lg'
+                className='mb-4 px-5 search-button-outline text-center'
+                href='/shopall'
+                target='_self'>
+                Shop Now
+              </button>
+            </Link>
           </div>
           {loading ? (
             <div className='text-center'>Loading Products...</div>

@@ -15,7 +15,7 @@ const Hero = () => {
         <div className='text-left text-white move-text'>
           <h5 className='mb-2 text-muted'>Materials/ Dresses/Tops</h5>
           <h1 className='mb-3 display-1 text-black'>Wear Color</h1>
-          <Link to='/cart'>
+          <Link to='/shopall'>
             <button
               size='lg'
               className='m-2 btn search-button px-5'

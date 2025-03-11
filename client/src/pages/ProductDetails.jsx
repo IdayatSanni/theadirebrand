@@ -22,6 +22,7 @@ const ProductDetails = () => {
       const { data } = await axios.get(
         `${import.meta.env.VITE_API}/api/v1/product/get-product/${params.slug}`
       );
+      console.log(data.product);
       setProduct(data?.product);
     } catch (error) {
       console.log(error);
@@ -77,6 +78,8 @@ const ProductDetails = () => {
           <h6>₦{product.price}</h6>
           <h6>Description : {product.description}</h6>
           <h6>Quantity: {product.quantity}</h6>
+          <h6>Yard: {product?.yard?.name || "No yard"}</h6>
+          <h6>length: {product?.length?.name || "No length"}</h6>
           <h6>Category: {product?.category?.[0]?.name || "No category"}</h6>
           <button
             className='btn search-button'
